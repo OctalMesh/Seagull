@@ -1,0 +1,36 @@
+root = true
+
+[*]
+
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Indentation & Spacing
+
+indent_style = space
+indent_size = 4
+tab_width = 4
+ij_continuation_indent_size = 8
+
+# Line Length & Guides
+
+max_line_length = 120
+ij_visual_guides = 80, 120
+
+
+[*.{yml,yaml,json,md,mdx}]
+
+indent_size = 2
+tab_width = 2
+ij_continuation_indent_size = 2
+
+[*.{bash,sh,zsh}]
+
+ij_shell_binary_ops_start_line = false
+ij_shell_keep_column_alignment_padding = false
+ij_shell_minify_program = false
+ij_shell_redirect_followed_by_space = false
+ij_shell_switch_cases_indented = true
+ij_shell_use_unix_line_separator = true

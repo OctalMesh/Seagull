@@ -1,0 +1,56 @@
+# ============================================================================ #
+#                              Environment / Misc                              #
+# ============================================================================ #
+
+.env
+*~
+.directory
+*.pem
+
+# ============================================================================ #
+#                                 IDE / Editor                                 #
+# ============================================================================ #
+
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# ============================================================================ #
+#                                 OS-specific                                  #
+# ============================================================================ #
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+.Trash-*
+.fuse_hidden*
+.nfs*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
