@@ -1,45 +1,51 @@
 # ============================================================================ #
-#                            Build / Dist / Output                             #
+#                                     Misc                                     #
 # ============================================================================ #
 
-build/
-node_modules/
-builds/
-dist/
-docs/static/
-clients/ts/*-client/
-clients/go/*client/
-servers/go/*-server/
-servers/java/*-server/
-clients/**/src/gen/
-clients/**/*.gen.go
-servers/**/*.gen.go
-servers/**/build/
-dev-dist/
-out/
-logs/
-*.tsbuildinfo
+.git/
+.github/
+infra/
 
-# ============================================================================ #
-#                              Environment / Misc                              #
-# ============================================================================ #
-
-*.env*
-!*.env.example
-*~
-.directory
-*.pem
-.project-structure.txt
+.prettierrc
+pnpm-lock.yaml
+*.md
+*.markdown
+*.json
+*.xml
 
 # ============================================================================ #
 #                                 IDE / Editor                                 #
 # ============================================================================ #
 
+# IntelliJ
 .idea/
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# Eclipse
+.classpath
+.project
+.apt_generated
+.factorypath
+.settings
+.springBeans
+.sts4-cache
+.settings/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+bin/
+plugin/bin/
+api/bin/
+
+# VS Code
 .vscode/
-*.iml
-*.ipr
-*.iws
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
 
 # ============================================================================ #
 #                                 OS-specific                                  #
@@ -49,7 +55,6 @@ logs/
 .DS_Store
 .AppleDouble
 .LSOverride
-Icon
 ._*
 .DocumentRevisions-V100
 .fseventsd
@@ -78,3 +83,34 @@ ehthumbs_vista.db
 [Dd]esktop.ini
 $RECYCLE.BIN/
 *.lnk
+
+# ============================================================================ #
+#                            Node / JavaScript / Yarn                          #
+# ============================================================================ #
+
+# Node
+node_modules/
+.pnp/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Build
+build/
+dist/
+dev-dist/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Testing
+coverage/
+
+# TypeScript
+*.tsbuildinfo

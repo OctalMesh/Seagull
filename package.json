@@ -1,0 +1,96 @@
+{
+  "name": "@octalmesh/seagull",
+  "version": "0.1.0",
+  "description": "Contract-first OpenAPI SDK, docs, and publishing pipeline - driven by a single seagull config.",
+  "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
+  "license": "MIT",
+  "homepage": "https://github.com/OctalMesh/Seagull",
+  "type": "module",
+  "keywords": [
+    "octalmesh",
+    "openapi",
+    "openapi-generator",
+    "sdk",
+    "codegen",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OctalMesh/Seagull.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OctalMesh/Seagull/issues",
+    "email": "security@octalmesh.com"
+  },
+  "bin": {
+    "seagull": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": ">=22.22.0",
+    "pnpm": ">=11.0.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^22.22.0",
+      "onFail": "warn"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run --passWithNoTests",
+    "test:watch": "vitest watch",
+    "test:ui": "vitest --ui",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "tree": "treee -I \"node_modules|.git|.idea|target|build|dist|dev-dist|bin|.project-structure.txt\" -a --dirs-first",
+    "tree:export": "pnpm run tree --silent > .project-structure.txt"
+  },
+  "dependencies": {
+    "@openapitools/openapi-generator-cli": "^2.41.0",
+    "@redocly/cli": "^2.50.0",
+    "@scalar/api-reference": "^1.67.0",
+    "commander": "^15.0.0",
+    "openapi-typescript": "^7.13.0",
+    "yaml": "^2.9.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "@types/node": "^26.4.0",
+    "@vitest/ui": "^5.0.0",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8",
+    "jiti": "^2.7.0",
+    "prettier": "^3.9.6",
+    "prettier-plugin-yaml": "^1.3.0",
+    "tree-node-cli": "^3.0.0",
+    "tsdown": "0.22.14",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.69.0",
+    "vitest": "^5.0.0"
+  }
+}
