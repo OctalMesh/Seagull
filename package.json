@@ -1,6 +1,6 @@
 {
   "name": "@octalmesh/seagull",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Contract-first OpenAPI SDK, docs, and publishing pipeline - driven by a single seagull config.",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",
