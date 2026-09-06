@@ -1,0 +1,43 @@
+{
+  "name": "@octalmesh/seagull-core",
+  "version": "0.0.2",
+  "description": "The Seagull engine - config loading and SDK generators - as an internal library.",
+  "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://github.com/OctalMesh/Seagull/tree/main/packages/core",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OctalMesh/Seagull.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/OctalMesh/Seagull/issues",
+    "email": "security@octalmesh.com"
+  },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@openapitools/openapi-generator-cli": "^2.41.0",
+    "@redocly/cli": "^2.51.1",
+    "openapi-typescript": "^7.13.0",
+    "yaml": "^2.9.0",
+    "zod": "^4.5.4"
+  }
+}

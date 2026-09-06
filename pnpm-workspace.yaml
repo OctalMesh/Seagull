@@ -9,8 +9,16 @@
 
 minimumReleaseAge: 0
 
+packages:
+  - "packages/*"
+
+update:
+  githubActions: true
+
 overrides:
-  "@octalmesh/seagull": "link:"
+  "@octalmesh/seagull-core": "workspace:*"
+  "@octalmesh/seagull-cli": "workspace:*"
+  "@octalmesh/seagull-docs": "workspace:*"
 
 allowBuilds:
   "@openapitools/openapi-generator-cli": true

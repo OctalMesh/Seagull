@@ -8,7 +8,6 @@ import { defineConfig } from "tsdown";
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig({
   entry: {
-    cli: "src/cli.ts",
     index: "src/index.ts",
   },
   platform: "node",
@@ -16,9 +15,6 @@ export default defineConfig({
   target: "node22",
   dts: {
     entry: "src/index.ts",
-  },
-  deps: {
-    alwaysBundle: [/^@octalmesh\//],
   },
   clean: true,
   sourcemap: true,

@@ -1,6 +1,6 @@
 {
   "name": "@octalmesh/seagull",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Contract-first OpenAPI SDK, docs, and publishing pipeline - driven by a single seagull config.",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",
@@ -42,7 +42,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "pnpm@11.24.0",
+  "packageManager": "pnpm@12.3.4",
   "engines": {
     "node": ">=22.22.0",
     "pnpm": ">=11.0.0"
@@ -55,9 +55,9 @@
     }
   },
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
-    "typecheck": "tsc --noEmit",
+    "build": "pnpm --filter \"./packages/**\" run build && tsdown",
+    "dev": "pnpm --filter \"./packages/**\" --parallel run dev",
+    "typecheck": "pnpm --filter \"./packages/**\" run typecheck && tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run --passWithNoTests",
     "test:watch": "vitest watch",
@@ -66,19 +66,23 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm publish",
     "tree": "treee -I \"node_modules|.git|.idea|target|build|dist|dev-dist|bin|.project-structure.txt\" -a --dirs-first",
     "tree:export": "pnpm run tree --silent > .project-structure.txt"
   },
   "dependencies": {
+    "@octalmesh/seagull-cli": "workspace:*",
+    "@octalmesh/seagull-core": "workspace:*",
+    "@octalmesh/seagull-docs": "workspace:*",
     "@openapitools/openapi-generator-cli": "^2.41.0",
-    "@redocly/cli": "^2.50.0",
+    "@redocly/cli": "^2.51.2",
     "@scalar/api-reference": "^1.67.0",
-    "commander": "^15.0.0",
-    "openapi-typescript": "^7.13.0",
-    "yaml": "^2.9.0",
-    "zod": "^4.5.4"
+    "openapi-typescript": "^7.13.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.7",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/node": "^26.4.0",
     "@vitest/ui": "^5.0.0",

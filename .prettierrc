@@ -13,11 +13,6 @@
   "importOrder": [
     "^node:",
     "<THIRD_PARTY_MODULES>",
-    "^@core/(.*)$",
-    "^@config/(.*)$",
-    "^@generators/(.*)$",
-    "^@commands/(.*)$",
-    "^@/(.*)$",
     "^[./]"
   ],
   "importOrderSeparation": true,

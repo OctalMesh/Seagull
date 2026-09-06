@@ -1,0 +1,40 @@
+{
+  "name": "@octalmesh/seagull-docs",
+  "version": "0.0.2",
+  "description": "Seagull's documentation site generator.",
+  "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://github.com/OctalMesh/Seagull/tree/main/packages/docs",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OctalMesh/Seagull.git",
+    "directory": "packages/docs"
+  },
+  "bugs": {
+    "url": "https://github.com/OctalMesh/Seagull/issues",
+    "email": "security@octalmesh.com"
+  },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@octalmesh/seagull-core": "workspace:*",
+    "@scalar/api-reference": "^1.67.0"
+  }
+}
