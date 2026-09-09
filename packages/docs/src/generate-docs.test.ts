@@ -9,7 +9,7 @@ import type { MockInstance } from "vitest";
 
 import { generateDocsSite } from "./generate-docs";
 
-const SCRIPT_REGEX = /<script>([\s\S]*?)<\/script>/;
+const SCRIPT_REGEX = /<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>/i;
 
 function makeConfig(
   rootDir: string,

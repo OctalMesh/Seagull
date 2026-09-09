@@ -25,7 +25,9 @@ export { run, runSync } from "./process/exec";
 export { resolveBinPath } from "./process/resolve-bin";
 
 export {
+  assertSafeRefName,
   git,
+  gitRefNameSchema,
   readFileAtTag,
   remoteBranchExists,
   requireOk,

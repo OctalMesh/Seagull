@@ -249,6 +249,20 @@ describe("loadConfig", () => {
     );
   });
 
+  it("throws a descriptive error when a resolved branch would start with '-'", async () => {
+    const cfg = baseConfig();
+
+    cfg.vars = { ...(cfg.vars as Record<string, unknown>), org: "octalmesh" };
+    (cfg.publishing as Record<string, unknown>).branch =
+      "-{vars.org}/{service}/{id}";
+
+    const configPath = await writeConfig(cfg);
+
+    expect(() => loadConfig(configPath)).toThrow(
+      /Invalid git publishing\.branch for artifact "auth\/ts-client" "-octalmesh\/auth\/ts-client": must not start with "-"/,
+    );
+  });
+
   it("throws when a template placeholder can't be resolved", async () => {
     const cfg = baseConfig();
 

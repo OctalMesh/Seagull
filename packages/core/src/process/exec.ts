@@ -20,7 +20,7 @@ export function run(
   cwd: string,
 ): Promise<void> {
   return new Promise<void>((resolvePromise, reject) => {
-    const child = spawn(command, args, { cwd, stdio: "inherit", shell: true });
+    const child = spawn(command, args, { cwd, stdio: "inherit" });
 
     child.on("close", (code) => {
       if (code === 0) {
@@ -46,7 +46,6 @@ export function runSync(command: string, args: string[], cwd: string): number {
   const result = spawnSync(command, args, {
     cwd,
     stdio: "inherit",
-    shell: true,
   });
 
   return result.status ?? 1;

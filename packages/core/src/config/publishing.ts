@@ -1,3 +1,4 @@
+import { assertSafeRefName } from "../git/git";
 import { buildTemplateContext, interpolate } from "./template";
 import type { ResolvedArtifact, VarsTree } from "./types";
 
@@ -33,5 +34,12 @@ export function renderArtifactTag(
     vars,
   });
 
-  return interpolate(artifact.publishing.tagTemplate, context);
+  const tag = interpolate(artifact.publishing.tagTemplate, context);
+
+  assertSafeRefName(
+    tag,
+    `publishing.tag for artifact "${contractName}/${artifact.id}"`,
+  );
+
+  return tag;
 }

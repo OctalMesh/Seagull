@@ -1,5 +1,37 @@
 import { spawnSync } from "node:child_process";
 
+import { z } from "zod";
+
+/**
+ * A git ref name (branch or tag) that's safe to pass as a CLI argument to
+ * `git`.
+ *
+ * @see {@link assertSafeRefName}
+ */
+export const gitRefNameSchema = z
+  .string()
+  .min(1)
+  .refine((value) => !value.startsWith("-"), {
+    message:
+      'must not start with "-" - git would parse it as a command-line option instead of a ref name',
+  });
+
+/**
+ * Throws if `name` isn't a safe git ref name - see {@link gitRefNameSchema}.
+ *
+ * @param name  - The candidate branch/tag name.
+ * @param label - What to call it in the error message (e.g. `"branch"`).
+ */
+export function assertSafeRefName(name: string, label: string): void {
+  const result = gitRefNameSchema.safeParse(name);
+
+  if (!result.success) {
+    throw new Error(
+      `Invalid git ${label} "${name}": ${result.error.issues[0]?.message}`,
+    );
+  }
+}
+
 /**
  * The result of executing a git command.
  *
@@ -38,9 +70,13 @@ export function git(args: string[], cwd: string): GitResult {
  * @returns Whether the remote branch exists (true) or not (false).
  */
 export function remoteBranchExists(repoRoot: string, branch: string): boolean {
+  assertSafeRefName(branch, "branch");
+
   return (
-    git(["ls-remote", "--exit-code", "--heads", "origin", branch], repoRoot)
-      .status === 0
+    git(
+      ["ls-remote", "--exit-code", "--heads", "origin", "--", branch],
+      repoRoot,
+    ).status === 0
   );
 }
 
@@ -52,8 +88,10 @@ export function remoteBranchExists(repoRoot: string, branch: string): boolean {
  * @returns Whether the remote tag exists (true) or not (false).
  */
 export function tagExists(repoRoot: string, tag: string): boolean {
+  assertSafeRefName(tag, "tag");
+
   return (
-    git(["ls-remote", "--exit-code", "--tags", "origin", tag], repoRoot)
+    git(["ls-remote", "--exit-code", "--tags", "origin", "--", tag], repoRoot)
       .status === 0
   );
 }
@@ -67,8 +105,10 @@ export function tagExists(repoRoot: string, tag: string): boolean {
  * @returns The result of the underlying `git fetch` command.
  */
 function fetchTag(repoRoot: string, tag: string): GitResult {
+  assertSafeRefName(tag, "tag");
+
   return git(
-    ["fetch", "origin", `refs/tags/${tag}:refs/tags/${tag}`, "--force"],
+    ["fetch", "origin", "--force", "--", `refs/tags/${tag}:refs/tags/${tag}`],
     repoRoot,
   );
 }
@@ -92,6 +132,12 @@ export function readFileAtTag(
   tag: string,
   filePath: string,
 ): string | null {
+  assertSafeRefName(tag, "tag");
+
+  if (filePath.length === 0) {
+    throw new Error("Invalid git file path: must not be empty");
+  }
+
   const fetch = fetchTag(repoRoot, tag);
 
   if (fetch.status !== 0) {

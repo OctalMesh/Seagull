@@ -165,7 +165,7 @@ describe("publishSdkCommand", () => {
 
     const calls = gitMock.mock.calls.map(([args]) => args.join(" "));
 
-    expect(calls).toContain("fetch origin sdk/svc-auth/ts-client");
+    expect(calls).toContain("fetch origin -- sdk/svc-auth/ts-client");
     expect(calls.some((c) => c.startsWith("worktree add --detach "))).toBe(
       true,
     );

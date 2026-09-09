@@ -71,7 +71,7 @@ export async function publishSdkCommand(
     const worktreeDir = await mkdtemp(path.join(tmpdir(), "sdk-publish-"));
     await rm(worktreeDir, { recursive: true, force: true });
 
-    git(["fetch", "origin", artifact.branch], config.rootDir);
+    git(["fetch", "origin", "--", artifact.branch], config.rootDir);
     const hasRemoteBranch = remoteBranchExists(config.rootDir, artifact.branch);
 
     const setup = hasRemoteBranch

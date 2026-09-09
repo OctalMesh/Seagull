@@ -19,7 +19,7 @@ describe("run", () => {
     spawnMock.mockReset();
   });
 
-  it("spawns the command with inherited stdio and shell:true", async () => {
+  it("spawns the command with inherited stdio and no shell", async () => {
     const child = new FakeChildProcess();
 
     spawnMock.mockReturnValue(child);
@@ -32,7 +32,6 @@ describe("run", () => {
     expect(spawnMock).toHaveBeenCalledWith("redocly", ["lint", "spec.yaml"], {
       cwd: "/repo",
       stdio: "inherit",
-      shell: true,
     });
   });
 
@@ -78,7 +77,7 @@ describe("runSync", () => {
     spawnSyncMock.mockReset();
   });
 
-  it("runs the command synchronously with inherited stdio and shell:true", () => {
+  it("runs the command synchronously with inherited stdio and no shell", () => {
     spawnSyncMock.mockReturnValue({ status: 0 });
 
     const status = runSync("git", ["status"], "/repo");
@@ -87,7 +86,6 @@ describe("runSync", () => {
     expect(spawnSyncMock).toHaveBeenCalledWith("git", ["status"], {
       cwd: "/repo",
       stdio: "inherit",
-      shell: true,
     });
   });
 

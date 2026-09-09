@@ -4,6 +4,7 @@ import path from "node:path";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 
+import { assertSafeRefName } from "../git/git";
 import {
   type ArtifactRefInput,
   type ContractInput,
@@ -171,17 +172,28 @@ function resolveArtifactRef(
  *                              from the config file.
  * @param context             - The flattened template context for this artifact
  *                              (`service`, `id`, `github.*`, `vars.*`).
+ * @param artifactLabel       - `"<contract>/<artifact id>"`, used only to
+ *                              identify the offending artifact in the error
+ *                              thrown when `branch` resolves unsafely - see
+ *                              {@link assertSafeRefName}.
  * @returns The fully resolved publishing conventions for this artifact.
  */
 function resolvePublishing(
   generatorPublishing: PublishingOverrideInput | undefined,
   rootPublishing: PublishingInput,
   context: Record<string, string>,
+  artifactLabel: string,
 ): ResolvedPublishing {
   const merged = applyPublishingOverride(rootPublishing, generatorPublishing);
+  const branch = interpolate(merged.branch, context);
+
+  assertSafeRefName(
+    branch,
+    `publishing.branch for artifact "${artifactLabel}"`,
+  );
 
   return {
-    branch: interpolate(merged.branch, context),
+    branch,
     tagTemplate: merged.tag,
     repositoryUrl: interpolate(merged.repositoryUrl, context),
     npmRegistry: interpolate(merged.npm.registry, context),
@@ -219,7 +231,12 @@ function resolveArtifact(
 ): ResolvedArtifact {
   const context = { ...contractContext, id };
   const resolved = interpolateDeep(def, context);
-  const publishing = resolvePublishing(def.publishing, rootPublishing, context);
+  const publishing = resolvePublishing(
+    def.publishing,
+    rootPublishing,
+    context,
+    `${contractName}/${id}`,
+  );
 
   return {
     id,

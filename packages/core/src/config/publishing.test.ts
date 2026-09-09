@@ -79,6 +79,27 @@ describe("renderArtifactTag", () => {
     ).toThrow(/Unknown template placeholder/);
   });
 
+  it("throws a descriptive error when the resolved tag would start with '-'", () => {
+    const artifact = makeArtifact({
+      publishing: {
+        ...makeArtifact().publishing,
+        tagTemplate: "-{vars.opt}",
+      },
+    });
+
+    expect(() =>
+      renderArtifactTag(
+        artifact,
+        "auth",
+        "1.0.0",
+        { owner: "OctalMesh", repo: "ows-contracts" },
+        { opt: "upload-pack=evil.sh" },
+      ),
+    ).toThrow(
+      /Invalid git publishing\.tag for artifact "auth\/ts-client" "-upload-pack=evil\.sh": must not start with "-"/,
+    );
+  });
+
   it("uses the artifact's own id, not its branch, for {id}", () => {
     const artifact = makeArtifact({ id: "go-client" });
 
