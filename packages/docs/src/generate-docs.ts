@@ -78,13 +78,13 @@ export async function generateDocsSite(config: ResolvedConfig): Promise<void> {
     <!-- Initialize the API Reference -->
     <script>
       Scalar.createApiReference("#app", {
-        baseServerURL: "${metadata.baseServerUrl}",
-        favicon: "${metadata.favicon}",
+        baseServerURL: ${JSON.stringify(metadata.baseServerUrl)},
+        favicon: ${JSON.stringify(metadata.favicon)},
         metaData: {
-          title: "${metadata.title}",
-          description: "${metadata.description}",
-          ogTitle: "${metadata.title}",
-          ogDescription: "${metadata.description}",
+          title: ${JSON.stringify(metadata.title)},
+          description: ${JSON.stringify(metadata.description)},
+          ogTitle: ${JSON.stringify(metadata.title)},
+          ogDescription: ${JSON.stringify(metadata.description)},
         },
         layout: "classic",
         darkMode: true,

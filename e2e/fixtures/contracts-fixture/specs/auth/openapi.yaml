@@ -1,0 +1,35 @@
+openapi: "3.1.0"
+
+info:
+  version: "0.1.0"
+  title: "Auth Service API"
+  description: "Authentication and user profile operations for the OctalMesh web shop."
+  license:
+    name: "MIT"
+    url: "https://opensource.org/license/MIT"
+
+servers:
+  - url: "/api"
+
+tags:
+  - name: "Auth"
+    description: "Authentication and user profile operations."
+
+paths:
+  /login:
+    $ref: "./paths/login.yaml"
+  /me:
+    $ref: "./paths/me.yaml"
+
+components:
+  schemas:
+    User:
+      $ref: "./components/schemas/User.yaml"
+    Token:
+      $ref: "./components/schemas/Token.yaml"
+    LoginRequest:
+      $ref: "./components/schemas/LoginRequest.yaml"
+
+  securitySchemes:
+    BearerAuth:
+      $ref: "../shared/components/security/bearerAuth.yaml"

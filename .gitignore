@@ -18,6 +18,8 @@ servers/**/build/
 dev-dist/
 out/
 logs/
+.vitest/
+coverage/
 *.tsbuildinfo
 
 # ============================================================================ #
@@ -30,6 +32,7 @@ logs/
 .directory
 *.pem
 .project-structure.txt
+openapitools.json
 
 # ============================================================================ #
 #                                 IDE / Editor                                 #

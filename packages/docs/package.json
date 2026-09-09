@@ -4,7 +4,6 @@
   "description": "Seagull's documentation site generator.",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",
-  "private": true,
   "homepage": "https://github.com/OctalMesh/Seagull/tree/main/packages/docs",
   "type": "module",
   "repository": {
@@ -24,6 +23,9 @@
       "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "engines": {
     "node": ">=22.22.0"

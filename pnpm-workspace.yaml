@@ -10,12 +10,14 @@
 minimumReleaseAge: 0
 
 packages:
+  - "."
   - "packages/*"
 
 update:
   githubActions: true
 
 overrides:
+  "@octalmesh/seagull": "workspace:*"
   "@octalmesh/seagull-core": "workspace:*"
   "@octalmesh/seagull-cli": "workspace:*"
   "@octalmesh/seagull-docs": "workspace:*"

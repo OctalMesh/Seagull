@@ -17,9 +17,6 @@ export default defineConfig({
   dts: {
     entry: "src/index.ts",
   },
-  deps: {
-    alwaysBundle: [/^@octalmesh\//],
-  },
   clean: true,
   sourcemap: true,
 });

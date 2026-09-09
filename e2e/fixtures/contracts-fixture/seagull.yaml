@@ -1,0 +1,66 @@
+# ============================================================================ #
+#                          Seagull Configuration File                          #
+# ============================================================================ #
+# Everything the seagull CLI needs to lint, bundle, generate, document, and    #
+# publish the contracts lives here.                                            #
+# ============================================================================ #
+
+configVersion: 1
+
+github:
+  owner: "OctalMesh"
+  repo: "ows-contracts-e2e-fixture"
+
+vars:
+  org: "octalmesh"
+
+docs:
+  server:
+    host: "127.0.0.1"
+    port: 4173
+  metadata:
+    title: "OWS E2E Docs"
+    description: "Seagull e2e fixture documentation"
+    favicon: "/favicon.ico"
+    baseServerUrl: "https://api.octalmesh.com"
+
+publishing:
+  branch: "sdk/svc-{service}/{id}"
+  tag: "svc-{service}-{id}-v{version}"
+  repositoryUrl: "https://github.com/{github.owner}/{github.repo}"
+  npm:
+    registry: "https://npm.pkg.github.com"
+    access: "public"
+  maven:
+    repositoryId: "github"
+    repositoryUrl: "https://maven.pkg.github.com/{github.owner}/{github.repo}"
+
+generators:
+  ts-server:
+    tool: "openapi-typescript"
+    lang: "typescript"
+    kind: "server"
+    package: "@{vars.org}/{service}-server"
+    readme: "readme-templates/ts-server.md"
+
+  ts-client:
+    tool: "openapi-generator"
+    generator: "typescript-fetch"
+    lang: "typescript"
+    kind: "client"
+    package: "@{vars.org}/{service}-client"
+    additionalProperties:
+      supportsES6: true
+
+contracts:
+  - name: "auth"
+    title: "Auth Service API"
+    entrypoint: "specs/auth/openapi.yaml"
+    artifacts:
+      - "ts-server"
+
+  - name: "catalog"
+    title: "Catalog Service API"
+    entrypoint: "specs/catalog/openapi.yaml"
+    artifacts:
+      - "ts-server"
