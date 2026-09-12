@@ -1,4 +1,5 @@
 ---
+"@octalmesh/seagull": patch
 ---
 
 CI only: added the full release pipeline for the `dev` / `release` branch model.
