@@ -1,5 +1,8 @@
 ---
 "@octalmesh/seagull": minor
+"@octalmesh/seagull-core": minor
+"@octalmesh/seagull-cli": minor
+"@octalmesh/seagull-docs": minor
 ---
 
 `paths.specFormat` lets bundled specs be written as `yaml` as well as (or

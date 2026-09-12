@@ -1,5 +1,8 @@
 ---
 "@octalmesh/seagull": minor
+"@octalmesh/seagull-core": minor
+"@octalmesh/seagull-cli": minor
+"@octalmesh/seagull-docs": minor
 ---
 
 Restructured into a monorepo of internal, private packages
