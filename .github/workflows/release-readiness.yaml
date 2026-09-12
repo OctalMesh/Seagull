@@ -49,22 +49,8 @@ jobs:
           echo "PR version:      $PR_VERSION"
           echo "release version: $RELEASE_VERSION"
 
-          node -e "
-            const isGreater = (a, b) => {
-              const pa = a.split('.').map(Number);
-              const pb = b.split('.').map(Number);
-
-              for (let i = 0; i < 3; i++) {
-                if ((pa[i] ?? 0) !== (pb[i] ?? 0)) return (pa[i] ?? 0) > (pb[i] ?? 0);
-              }
-
-              return false;
-            };
-
-            if (!isGreater('$PR_VERSION', '$RELEASE_VERSION')) {
-              console.error('::error::Package version ($PR_VERSION) is not greater than the version already on release ($RELEASE_VERSION).');
-              console.error('::error::Merge the \"Version Packages\" PR on dev (see version.yaml) before opening this PR.');
-
-              process.exit(1);
-            }
-          "
+          if ! node .github/scripts/version-gt.mjs "$PR_VERSION" "$RELEASE_VERSION"; then
+            echo "::error::Package version ($PR_VERSION) is not greater than the version already on release ($RELEASE_VERSION)."
+            echo "::error::Merge the \"Version Packages\" PR on dev (see version.yaml) before opening this PR."
+            exit 1
+          fi

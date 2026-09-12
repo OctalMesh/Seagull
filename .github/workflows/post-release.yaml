@@ -2,18 +2,24 @@
 #                             Post-Release Workflow                            #
 # ============================================================================ #
 # Runs on every push to release, i.e. right after a dev -> release PR merges.  #
-# Two independent jobs:                                                        #
 #                                                                              #
+# Two independent jobs:                                                        #
 #  - tag-release: if the version on release doesn't have a tag yet, cuts       #
 #    "vX.Y.Z" and opens a DRAFT GitHub Release with the changelog for that     #
 #    version pre-filled. Publishing to npm is a separate, deliberate step -    #
 #    it only happens once a maintainer clicks "Publish" on that draft, which   #
 #    fires publish.yaml. Already-tagged versions (e.g. a release-only hotfix   #
 #    commit that didn't bump the version) are skipped.                         #
-#                                                                              #
 #  - sync-dev: merges release straight back into dev so the merge commit and   #
 #    any version-bump commits never have to be reconciled by hand. Requires    #
 #    dev's branch protection to allow this workflow's token to push directly.  #
+#                                                                              #
+# Secrets:                                                                     #
+#   - GITHUB_TOKEN: Used to authenticate the actions that tag releases and     #
+#                   merge release back into dev. This token is automatically   #
+#                   provided by GitHub Actions.                                #
+#   - SYNC_PAT:     Personal Access Token with contents and PR access, used to #
+#                   merge release back into dev.                               #
 #                                                                              #
 # See: RELEASING.md - for more details on the release process.                 #
 # ============================================================================ #
@@ -118,7 +124,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          token: ${{ secrets.SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.SYNC_PAT || secrets.GITHUB_TOKEN }}
 
       - name: "Setup: Git identity"
         run: |

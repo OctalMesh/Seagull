@@ -4,6 +4,18 @@
 # Keeps a "Version Packages" PR up to date whenever changesets land on dev,    #
 # merging that PR bumps every package's version and updates CHANGELOG.md.      #
 #                                                                              #
+# Once the Version Packages PR gets merged, dev's version pulls ahead of       #
+# release's - that's the exact, unambiguous signal that dev is ready to        #
+# promote, so open the dev -> release PR right then instead of waiting for a   #
+# maintainer to remember to do it by hand.                                     #
+#                                                                              #
+# Secrets:                                                                     #
+#   - GITHUB_TOKEN: Used to authenticate the actions that bump versions and    #
+#                   open PRs. This token is automatically provided by GitHub   #
+#                   Actions.                                                   #
+#   - SYNC_PAT:     Personal Access Token with contents and PR access, used to #
+#                   open the dev -> release PR.                                #
+#                                                                              #
 # See: https://changesets.dev                                                  #
 # ============================================================================ #
 
@@ -19,6 +31,7 @@ permissions:
   contents: "read"
 
 jobs:
+  # Runs the changesets/action to bump versions
   version:
     name: "Version"
     runs-on: "ubuntu-latest"
@@ -53,3 +66,65 @@ jobs:
           pr-title: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Opens a dev -> release PR once the version on dev moves ahead of release
+  open-release-pr:
+    name: "Open Release PR"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 5
+    permissions:
+      contents: "read"
+      pull-requests: "write"
+
+    steps:
+      - name: "Setup: Checkout repository"
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: "Setup: Fetch release branch"
+        run: "git fetch origin release"
+
+      - name: "Run: Compare version against release"
+        id: "compare"
+        run: |
+          DEV_VERSION=$(node -p "require('./package.json').version")
+          git show origin/release:package.json > /tmp/release-package.json
+          RELEASE_VERSION=$(node -p "require('/tmp/release-package.json').version")
+
+          echo "dev version:     $DEV_VERSION"
+          echo "release version: $RELEASE_VERSION"
+
+          echo "dev_version=$DEV_VERSION" >> "$GITHUB_OUTPUT"
+
+          if node .github/scripts/version-gt.mjs "$DEV_VERSION" "$RELEASE_VERSION"; then
+            echo "is_ahead=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_ahead=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: "Run: Open dev -> release PR"
+        if: steps.compare.outputs.is_ahead == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh pr list --base release --head dev --state open --json number --jq '.[0].number')
+
+          if [ -n "$EXISTING" ]; then
+            echo "PR #$EXISTING is already open, nothing to do."
+            exit 0
+          fi
+
+          {
+            echo "Promotes \`dev\` to \`release\` for v${{ steps.compare.outputs.dev_version }}."
+            echo ""
+            echo "Opened automatically once \`dev\`'s version moved ahead of \`release\`'s. \`release-readiness.yaml\` re-verifies the version bump, \`quality.yaml\`/\`test.yaml\`/\`codeql.yaml\` re-run the full check suite."
+            echo ""
+            echo "Merge with a **merge commit** (see RELEASING.md) so \`post-release.yaml\`'s \`sync-dev\` job can fast-forward \`release\` back into \`dev\` cleanly."
+          } > /tmp/pr-body.md
+
+          gh pr create \
+            --base release \
+            --head dev \
+            --title "release: v${{ steps.compare.outputs.dev_version }}" \
+            --body-file /tmp/pr-body.md
