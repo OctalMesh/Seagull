@@ -44,7 +44,6 @@ jobs:
         with:
           node-version: 24
           cache: "pnpm"
-          registry-url: "https://registry.npmjs.org"
 
       - name: "Setup: Install dependencies"
         run: "pnpm install --frozen-lockfile"
@@ -70,5 +69,3 @@ jobs:
 
       - name: "Run: Publish to npm"
         run: "pnpm run release:publish"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
