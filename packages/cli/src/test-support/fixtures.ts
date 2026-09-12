@@ -71,6 +71,7 @@ export function makeConfig(
       specs: path.join(dist, "specs"),
       docs: path.join(dist, "docs"),
       sdk: path.join(dist, "sdk"),
+      specFormat: ["json"],
     },
     github: GITHUB,
     vars: {},

@@ -30,11 +30,23 @@ export const githubSchema = z.object({
   repo: z.string().min(1),
 });
 
+export const specFormatSchema = z.enum(["json", "yaml"]);
+export type SpecFormat = z.infer<typeof specFormatSchema>;
+
+export const specFormatListSchema = z
+  .union([specFormatSchema, z.array(specFormatSchema).min(1)])
+  .default("json")
+  .transform((value) => (Array.isArray(value) ? value : [value]))
+  .refine((formats) => new Set(formats).size === formats.length, {
+    message: "paths.specFormat entries must be unique",
+  });
+
 export const pathsSchema = z.object({
   dist: z.string().min(1).default("dist"),
   specs: z.string().min(1).optional(),
   docs: z.string().min(1).optional(),
   sdk: z.string().min(1).optional(),
+  specFormat: specFormatListSchema,
 });
 
 export const docsSchema = z.object({
@@ -246,13 +258,13 @@ export const contractSchema = z.object({
 
 export const rootConfigSchema = z.object({
   /**
-   * The config schema version this file targets. Currently must be `1`
+   * The config schema version this file targets. Currently, must be `1`
    * (the only version that exists) - see {@link CONFIG_SCHEMA_VERSION}.
    */
   configVersion: z.literal(CONFIG_SCHEMA_VERSION),
   github: githubSchema,
   vars: varsTreeSchema.default({}),
-  paths: pathsSchema.default({ dist: "dist" }),
+  paths: pathsSchema.default({ dist: "dist", specFormat: ["json"] }),
   docs: docsSchema,
   /**
    * Publishing conventions (branch/tag naming, registry URLs), applied to

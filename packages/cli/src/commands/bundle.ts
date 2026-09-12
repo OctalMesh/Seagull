@@ -5,11 +5,14 @@ import {
   type ResolvedConfig,
   resolveBinPath,
   run,
+  specFilename,
   syncRedoclyConfig,
 } from "@octalmesh/seagull-core";
 
 /**
- * Bundles every contract's OpenAPI spec into `dist/specs/<contract>.json`.
+ * Bundles every contract's OpenAPI spec into `dist/specs/<contract>.<format>`
+ * once per format configured in `paths.specFormat` (`json` by default;
+ * configure `yaml`, or both, to bundle into more than one format at once).
  *
  * @param config - The resolved seagull config.
  */
@@ -22,16 +25,23 @@ export async function bundleCommand(config: ResolvedConfig): Promise<void> {
   const redoclyBin = resolveBinPath("@redocly/cli", "redocly");
 
   for (const contract of config.contracts) {
-    const output = path.join(config.paths.specs, `${contract.name}.json`);
+    for (const format of config.paths.specFormat) {
+      const output = path.join(
+        config.paths.specs,
+        specFilename(contract.name, format),
+      );
 
-    await run(
-      "node",
-      [redoclyBin, "bundle", contract.entrypoint, "-o", output],
-      config.rootDir,
-    );
+      await run(
+        "node",
+        [redoclyBin, "bundle", contract.entrypoint, "-o", output],
+        config.rootDir,
+      );
+    }
   }
 
+  const formats = config.paths.specFormat.join(", ");
+
   console.log(
-    `Bundled ${config.contracts.length} specifications into ${config.paths.specs}`,
+    `Bundled ${config.contracts.length} specifications (${formats}) into ${config.paths.specs}`,
   );
 }

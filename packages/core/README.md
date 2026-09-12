@@ -1,52 +1,168 @@
-# @octalmesh/seagull-core
+<!--suppress HtmlDeprecatedAttribute, HtmlUnknownTarget -->
+<h1 id="title" align="center">@octalmesh/seagull-core</h1>
 
-**Internal package** - not published to npm on its own. This is the config
-loading + SDK generator engine, bundled straight into
-[`@octalmesh/seagull`](../..) at build time (see the root `tsdown.config.ts`).
-It's organized as its own package for a clean internal boundary, not as a
-separately installable one.
+<div align="center">
+  <a rel="noopener noreferrer" href="https://www.npmjs.com/package/@octalmesh/seagull-core">
+    <img alt="npm version" src="https://img.shields.io/npm/v/@octalmesh/seagull-core?style=for-the-badge&color=fff&labelColor=363636" />
+  </a>
+</div>
 
-See the [main README](https://github.com/OctalMesh/Seagull#readme) for the
-full config reference (`generators:`, `contracts:`, `publishing:`, custom
-README templates, ...) and the [`@octalmesh/seagull`](../..) package for the
-actual public API surface (this package's exports, re-exported).
+<div align="center">
+  <h6>
+    <a rel="noopener noreferrer" href="../../README.md">Main Readme</a>
+    ·
+    <a rel="noopener noreferrer" href="../cli/README.md">seagull-cli</a>
+    ·
+    <a rel="noopener noreferrer" href="../docs/README.md">seagull-docs</a>
+  </h6>
+</div>
 
-## What lives here
+Published independently for anyone who wants just this piece - e.g. scripting
+against `loadConfig()` without pulling in the CLI's `commander` dependency or
+the docs bundle. Most people should install [`@octalmesh/seagull`](../..)
+instead, which bundles this package (and `-cli`/`-docs`) into one.
 
-- `config/` - the `seagull.yaml` schema (zod), loader, `{...}` template
-  engine, and publishing-conventions resolution.
-- `generator/` - the `Generator` abstract primitive and `GeneratorRegistry`
-  every concrete generator plugs into.
-- `generators/` - the built-in `openapi-generator-cli` and `openapi-typescript`
-  generator implementations.
-- `readme/` - README rendering for generated SDK artifacts (custom template
-  or built-in default, per language/kind).
-- `redocly/` - keeps `redocly.yaml` in sync with `seagull.yaml`.
-- `git/`, `process/`, `version/` - small process/git/versioning utilities
-  used by the pipeline commands (which live in
-  [`@octalmesh/seagull-cli`](../cli)).
+<div align="center">
+  <h2 id="what-lives-here">What lives here</h2>
+</div>
 
-## Extending seagull with a custom generator
+| Path               | What it is                                                                                                                        |
+|--------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `config/`          | The `seagull.yaml` zod schema, loader, `{...}` template engine, `paths.specFormat` helpers, and publishing-conventions resolution |
+| `generator/`       | The `Generator` abstract primitive and the `GeneratorRegistry` every concrete generator plugs into                                |
+| `generators/`      | The built-in `openapi-generator-cli` and `openapi-typescript` generator implementations                                           |
+| `readme/`          | README rendering for generated SDK artifacts (custom template or built-in default, per language/kind)                             |
+| `redocly/`         | Keeps `redocly.yaml` in sync with `seagull.yaml`                                                                                  |
+| `version/`         | `hashSpec`/`resolveVersion` - content hashing and `info.version` extraction from a bundled spec                                   |
+| `git/`, `process/` | Small git/process utilities (`run`, `resolveBinPath`, `assertSafeRefName`, ...) used by the pipeline commands                     |
 
-`Generator` is the root primitive every SDK generator implements -
-`GeneratorRegistry` looks one up by the `tool` name referenced in
-`generators.*.tool` in the config:
+<div align="center">
+  <h2 id="the-generator-primitive">The Generator primitive</h2>
+</div>
+
+```mermaid
+flowchart LR
+    A["seagull.yaml<br/>generators.*.tool"] --> B{{"GeneratorRegistry.resolve(tool)"}}
+    B -->|"openapi-generator"| C["OpenApiGeneratorCli"]
+    B -->|"openapi-typescript"| D["OpenApiTypescriptGenerator"]
+    C --> E(["generate(ctx) -> dist/sdk/&lt;contract&gt;/&lt;artifact&gt;"])
+    D --> E
+
+    classDef node fill:#363636,stroke:#666,color:#fff,rx:6,ry:6
+    classDef result fill:#1f6feb,stroke:#1f6feb,color:#fff,rx:20,ry:20
+    class A,B,C,D node
+    class E result
+```
+
+`GeneratorRegistry` looks up one `Generator` instance per **tool** (`SdkTool`,
+currently `"openapi-generator" | "openapi-typescript"` - a closed union, not an
+open plugin-name string) - one instance per underlying tool, not per language,
+since a single `openapi-generator-cli -g java`/`-g go` invocation already covers
+every language that tool supports.
 
 ```ts
 import { Generator, GeneratorRegistry } from "@octalmesh/seagull-core";
 import type { GenerateContext } from "@octalmesh/seagull-core";
 
-class MyGenerator extends Generator {
-  readonly tool = "my-tool";
+class MyOpenApiGeneratorCli extends Generator {
+  readonly tool = "openapi-generator"; // must be an existing SdkTool value
 
   async generate(ctx: GenerateContext): Promise<void> {
-    // ...
+    // your own openapi-generator-cli invocation, patching, etc.
   }
 }
 
-const registry = new GeneratorRegistry().register(new MyGenerator());
+const registry = new GeneratorRegistry().register(new MyOpenApiGeneratorCli());
 ```
 
-## License
+`tool` is typed `SdkTool`, so this is swapping the *implementation* behind an
+existing tool name (useful if you want different generator behavior than the
+built-in `OpenApiGeneratorCli`/`OpenApiTypescriptGenerator`, in your own script
+built on `loadConfig()` + a custom `GeneratorRegistry`) - it's not a way to add
+a brand-new third tool name to `generators.*.tool` in `seagull.yaml` itself,
+since the CLI's own registry and the config schema both only know about the two
+built-in values today.
 
-MIT
+<div align="center">
+  <!--
+  =====================
+         FOOTER
+  =====================
+  -->
+  <h1></h1>
+  <br />
+  <!-- OctalMesh Logo -->
+  <a rel="noopener noreferrer" target="_blank" href="https://octalmesh.com">
+    <picture>
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/logo/svg/octal_mesh_center.svg" />
+      <img alt="OctalMesh" src="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/logo/svg/octal_mesh_center_white.svg" height="48" />
+    </picture>
+  </a>
+  <br /><br />
+  <!-- Socials -->
+  <div>
+    <!-- Telegram Badge -->
+    <a rel="noopener noreferrer" target="_blank" href="https://octalmesh.com/telegram">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/telegram.svg" />
+        <img alt="Telegram" src="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/telegram_white.svg" width="48" />
+      </picture>
+    </a>
+    &nbsp;
+    <!-- YouTube Badge -->
+    <a rel="noopener noreferrer" target="_blank" href="https://octalmesh.com/youtube">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/youtube.svg" />
+        <img alt="YouTube" src="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/youtube_white.svg" width="48" />
+      </picture>
+    </a>
+    &nbsp;
+    <!-- TikTok Badge -->
+    <a rel="noopener noreferrer" target="_blank" href="https://octalmesh.com/tiktok">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/tiktok.svg" />
+        <img alt="TikTok" src="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/tiktok_white.svg" width="48" />
+      </picture>
+    </a>
+    &nbsp;
+    <!-- Instagram Badge -->
+    <a rel="noopener noreferrer" target="_blank" href="https://octalmesh.com/instagram">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/instagram.svg" />
+        <img alt="Instagram" src="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/instagram_white.svg" width="48" />
+      </picture>
+    </a>
+    &nbsp;
+    <!-- X Badge -->
+    <a rel="noopener noreferrer" target="_blank" href="https://octalmesh.com/x">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/x.svg" />
+        <img alt="X" src="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/x_white.svg" width="48" />
+      </picture>
+    </a>
+    &nbsp;
+    <!-- Reddit Badge -->
+    <a rel="noopener noreferrer" target="_blank" href="https://octalmesh.com/reddit">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/reddit.svg" />
+        <img alt="Reddit" src="https://raw.githubusercontent.com/OctalMesh/OctalDesign/release/assets/icon/svg/reddit_white.svg" width="48" />
+      </picture>
+    </a>
+  </div>
+</div>
+<h6>
+  <div align="center">
+    • • •
+    <br /><br />
+    This project is licensed under the <a rel="noopener noreferrer" href="../../LICENSE.md">MIT License</a>
+    <br /><br />
+  </div>
+  <div align="justify">
+    <ul>
+      <li>Feel free to use this project for any purpose, including commercial applications.</li>
+      <li>You are permitted to modify, distribute, and include this project in any form, as long as the original copyright notice is retained.</li>
+      <li>If you share or publish modified versions, attribution to the original <a rel="noopener noreferrer" href="https://github.com/OctalMesh/Seagull">GitHub repository</a> is appreciated.</li>
+      <li>This software is provided "as is", without any warranties or guarantees, as detailed in the license terms.</li>
+    </ul>
+  </div>
+</h6>

@@ -30,7 +30,9 @@ import type {
  * @returns The validated (but not yet resolved) raw config.
  */
 function readRawConfig(configPath: string): RootConfigInput {
-  const raw: unknown = parseYaml(readFileSync(configPath, "utf8"));
+  const raw: unknown = parseYaml(readFileSync(configPath, "utf8"), {
+    merge: true,
+  });
   const result = rootConfigSchema.safeParse(raw);
 
   if (!result.success) {
@@ -358,7 +360,13 @@ export function loadConfig(configPath: string): ResolvedConfig {
   return {
     configVersion: raw.configVersion,
     rootDir,
-    paths: { dist: distDir, specs: specsDir, docs: docsDir, sdk: sdkDir },
+    paths: {
+      dist: distDir,
+      specs: specsDir,
+      docs: docsDir,
+      sdk: sdkDir,
+      specFormat: raw.paths.specFormat,
+    },
     github: raw.github,
     vars: raw.vars,
     docs: raw.docs,

@@ -128,8 +128,33 @@ describe("loadConfig", () => {
     expect(config.paths.specs).toBe(path.join(dir, "dist", "specs"));
     expect(config.paths.docs).toBe(path.join(dir, "dist", "docs"));
     expect(config.paths.sdk).toBe(path.join(dir, "dist", "sdk"));
+    expect(config.paths.specFormat).toEqual(["json"]);
     expect(config.contracts).toHaveLength(2);
     expect(config.allArtifacts).toHaveLength(3);
+  });
+
+  it("respects an explicit paths.specFormat override, accepting a single value or a list", async () => {
+    const cfg = baseConfig();
+
+    (cfg.paths as Record<string, unknown>) = {
+      dist: "dist",
+      specFormat: "yaml",
+    };
+
+    const configPath = await writeConfig(cfg);
+    const config = loadConfig(configPath);
+
+    expect(config.paths.specFormat).toEqual(["yaml"]);
+
+    (cfg.paths as Record<string, unknown>) = {
+      dist: "dist",
+      specFormat: ["yaml", "json"],
+    };
+
+    const configPath2 = await writeConfig(cfg);
+    const config2 = loadConfig(configPath2);
+
+    expect(config2.paths.specFormat).toEqual(["yaml", "json"]);
   });
 
   it("respects explicit paths.specs/docs/sdk overrides instead of dist-relative defaults", async () => {

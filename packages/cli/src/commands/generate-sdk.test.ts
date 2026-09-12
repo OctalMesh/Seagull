@@ -306,4 +306,78 @@ describe("generateSdkCommand", () => {
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("auth@9.9.9"));
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("Generated 1"));
   });
+
+  it("reads <specs>/<name>.yaml and parses it as YAML when paths.specFormat is 'yaml'", async () => {
+    const outputDir = path.join(dir, "dist", "sdk", "auth", "ts-client");
+    const config = makeConfig(dir, {
+      contracts: [
+        makeContract({
+          name: "auth",
+          artifacts: [makeArtifact({ id: "ts-client", outputDir })],
+        }),
+      ],
+    });
+
+    config.paths.specFormat = ["yaml"];
+
+    await mkdir(config.paths.specs, { recursive: true });
+    await writeFile(
+      path.join(config.paths.specs, "auth.yaml"),
+      'info:\n  version: "7.0.0"\n',
+    );
+    await mkdir(outputDir, { recursive: true });
+
+    await generateSdkCommand(config);
+
+    expect(resolveVersionMock).toHaveBeenCalledWith(
+      { info: { version: "7.0.0" } },
+      "auth",
+    );
+
+    const ctx = openApiGeneratorGenerate.mock.calls[0]![0];
+
+    expect(ctx).toMatchObject({
+      specInputPath: path.join(config.paths.specs, "auth.yaml"),
+    });
+  });
+
+  it("uses the first entry in paths.specFormat as the primary format when several are configured", async () => {
+    const outputDir = path.join(dir, "dist", "sdk", "auth", "ts-client");
+    const config = makeConfig(dir, {
+      contracts: [
+        makeContract({
+          name: "auth",
+          artifacts: [makeArtifact({ id: "ts-client", outputDir })],
+        }),
+      ],
+    });
+
+    config.paths.specFormat = ["yaml", "json"];
+
+    await mkdir(config.paths.specs, { recursive: true });
+    // Both bundled formats exist on disk (as a real `bundle` run would leave
+    // them) - only the primary (first) one, "yaml", should actually get read.
+    await writeFile(
+      path.join(config.paths.specs, "auth.yaml"),
+      'info:\n  version: "1.2.3"\n',
+    );
+    await writeFile(
+      path.join(config.paths.specs, "auth.json"),
+      '{"info":{"version":"9.9.9"}}',
+    );
+    await mkdir(outputDir, { recursive: true });
+
+    await generateSdkCommand(config);
+
+    expect(resolveVersionMock).toHaveBeenCalledWith(
+      { info: { version: "1.2.3" } },
+      "auth",
+    );
+
+    const ctx = openApiGeneratorGenerate.mock.calls[0]![0];
+
+    expect(ctx).toMatchObject({
+      specInputPath: path.join(config.paths.specs, "auth.yaml"),
+    });
+  });
 });

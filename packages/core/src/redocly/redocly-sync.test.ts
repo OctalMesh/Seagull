@@ -18,6 +18,7 @@ function makeConfig(overrides: Partial<ResolvedConfig> = {}): ResolvedConfig {
       specs: "/repo/dist/specs",
       docs: "/repo/dist/docs",
       sdk: "/repo/dist/sdk",
+      specFormat: ["json"],
     },
     github: GITHUB,
     vars: {},

@@ -5,7 +5,14 @@
   "baseBranch": "dev",
   "commit": false,
   "updateInternalDependencies": "patch",
-  "fixed": [],
+  "fixed": [
+    [
+      "@octalmesh/seagull",
+      "@octalmesh/seagull-cli",
+      "@octalmesh/seagull-core",
+      "@octalmesh/seagull-docs"
+    ]
+  ],
   "linked": [],
   "ignore": []
 }

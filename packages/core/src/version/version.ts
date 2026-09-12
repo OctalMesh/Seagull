@@ -54,12 +54,14 @@ export function resolveVersion(
 }
 
 /**
- * Computes a stable content hash of a bundled OpenAPI document's raw JSON text.
+ * Computes a stable content hash of a bundled OpenAPI document's raw file
+ * contents (JSON or YAML, whichever `paths.specFormat` produced).
+ *
  * Stamped alongside `VERSION` into every generated SDK package so
  * `publish-sdk.ts` can tell a genuine no-op republish (same spec, same version)
  * apart from a spec that changed without its `info.version` being bumped.
  *
- * @param raw - The raw bundled spec file contents (JSON text).
+ * @param raw - The raw bundled spec file contents.
  * @returns A `sha256` hex digest of the raw contents.
  */
 export function hashSpec(raw: string): string {

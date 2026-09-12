@@ -118,7 +118,75 @@ describe("bundleCommand", () => {
     await bundleCommand(config);
 
     expect(logSpy).toHaveBeenCalledWith(
-      `Bundled 2 specifications into ${config.paths.specs}`,
+      `Bundled 2 specifications (json) into ${config.paths.specs}`,
+    );
+  });
+
+  it("writes -o <specs>/<name>.yaml when paths.specFormat is 'yaml'", async () => {
+    const config = makeConfig(dir, {
+      contracts: [
+        makeContract({
+          name: "auth",
+          entrypoint: "/repo/specs/auth/openapi.yaml",
+        }),
+      ],
+    });
+
+    config.paths.specFormat = ["yaml"];
+
+    await bundleCommand(config);
+
+    expect(runMock).toHaveBeenCalledWith(
+      "node",
+      [
+        "/fake/bin/redocly.js",
+        "bundle",
+        "/repo/specs/auth/openapi.yaml",
+        "-o",
+        path.join(config.paths.specs, "auth.yaml"),
+      ],
+      config.rootDir,
+    );
+  });
+
+  it("bundles into every configured format, once per format per contract", async () => {
+    const config = makeConfig(dir, {
+      contracts: [
+        makeContract({
+          name: "auth",
+          entrypoint: "/repo/specs/auth/openapi.yaml",
+        }),
+      ],
+    });
+
+    config.paths.specFormat = ["json", "yaml"];
+
+    await bundleCommand(config);
+
+    expect(runMock).toHaveBeenCalledTimes(2);
+    expect(runMock).toHaveBeenNthCalledWith(
+      1,
+      "node",
+      [
+        "/fake/bin/redocly.js",
+        "bundle",
+        "/repo/specs/auth/openapi.yaml",
+        "-o",
+        path.join(config.paths.specs, "auth.json"),
+      ],
+      config.rootDir,
+    );
+    expect(runMock).toHaveBeenNthCalledWith(
+      2,
+      "node",
+      [
+        "/fake/bin/redocly.js",
+        "bundle",
+        "/repo/specs/auth/openapi.yaml",
+        "-o",
+        path.join(config.paths.specs, "auth.yaml"),
+      ],
+      config.rootDir,
     );
   });
 });

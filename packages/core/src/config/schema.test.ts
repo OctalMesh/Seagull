@@ -328,12 +328,15 @@ describe("rootConfigSchema", () => {
     }
   });
 
-  it("defaults 'paths' to { dist: 'dist' }", () => {
+  it("defaults 'paths' to { dist: 'dist', specFormat: ['json'] }", () => {
     const result = rootConfigSchema.safeParse(minimalRootConfig);
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.paths).toEqual({ dist: "dist" });
+      expect(result.data.paths).toEqual({
+        dist: "dist",
+        specFormat: ["json"],
+      });
     }
   });
 
@@ -396,8 +399,60 @@ describe("rootConfigSchema", () => {
         dist: "build",
         specs: "specs-out",
         docs: "docs-out",
+        specFormat: ["json"],
       });
     }
+  });
+
+  it("accepts paths.specFormat as a single value, normalizing it to a one-element array", () => {
+    const result = rootConfigSchema.safeParse({
+      ...minimalRootConfig,
+      paths: { dist: "dist", specFormat: "yaml" },
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.paths.specFormat).toEqual(["yaml"]);
+    }
+  });
+
+  it("accepts paths.specFormat as a list, bundling into more than one format", () => {
+    const result = rootConfigSchema.safeParse({
+      ...minimalRootConfig,
+      paths: { dist: "dist", specFormat: ["json", "yaml"] },
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.paths.specFormat).toEqual(["json", "yaml"]);
+    }
+  });
+
+  it("rejects a paths.specFormat outside 'json' | 'yaml'", () => {
+    const result = rootConfigSchema.safeParse({
+      ...minimalRootConfig,
+      paths: { dist: "dist", specFormat: "yml" },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects an empty paths.specFormat list", () => {
+    const result = rootConfigSchema.safeParse({
+      ...minimalRootConfig,
+      paths: { dist: "dist", specFormat: [] },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects duplicate entries in paths.specFormat", () => {
+    const result = rootConfigSchema.safeParse({
+      ...minimalRootConfig,
+      paths: { dist: "dist", specFormat: ["json", "json"] },
+    });
+
+    expect(result.success).toBe(false);
   });
 
   it("rejects a config missing docs metadata", () => {

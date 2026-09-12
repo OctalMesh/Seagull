@@ -13,7 +13,7 @@ export default defineConfig({
   },
   platform: "node",
   format: ["esm"],
-  target: "node22",
+  target: "node24",
   dts: {
     entry: "src/index.ts",
   },

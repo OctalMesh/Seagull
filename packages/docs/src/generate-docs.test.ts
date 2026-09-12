@@ -25,6 +25,7 @@ function makeConfig(
       specs: path.join(dist, "specs"),
       docs: path.join(dist, "docs"),
       sdk: path.join(dist, "sdk"),
+      specFormat: ["json"],
     },
     github: { owner: "OctalMesh", repo: "ows-contracts" },
     vars: {},
@@ -252,5 +253,40 @@ describe("generateDocsSite", () => {
     const config = makeConfig(dir);
 
     await expect(generateDocsSite(config)).rejects.toThrow();
+  });
+
+  it("honors paths.specFormat: yaml end-to-end (copies .yaml, links .yaml)", async () => {
+    const config = makeConfig(dir, {
+      paths: {
+        ...makeConfig(dir).paths,
+        specFormat: ["yaml"],
+      },
+    });
+
+    await mkdir(config.paths.specs, { recursive: true });
+
+    for (const contract of config.contracts) {
+      await writeFile(
+        path.join(config.paths.specs, `${contract.name}.yaml`),
+        `openapi: "3.1.0"\ninfo:\n  title: ${contract.title}\n  version: "1.0.0"\npaths: {}\n`,
+      );
+    }
+
+    await generateDocsSite(config);
+
+    const authSpec = await readFile(
+      path.join(config.paths.docs, "specs", "auth.yaml"),
+      "utf8",
+    );
+
+    expect(authSpec).toContain("title: Auth Service API");
+
+    const html = await readFile(
+      path.join(config.paths.docs, "index.html"),
+      "utf8",
+    );
+
+    expect(html).toContain('url: "./specs/auth.yaml"');
+    expect(html).toContain('url: "./specs/catalog.yaml"');
   });
 });
