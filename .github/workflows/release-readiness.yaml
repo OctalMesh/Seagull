@@ -1,0 +1,70 @@
+# ============================================================================ #
+#                          Release Readiness Workflow                          #
+# ============================================================================ #
+# Gates pull requests targeting release. quality.yaml and test.yaml already    #
+# run their checks against release as a PR-target branch, so this workflow     #
+# adds only what they don't cover: proof that the version actually moved       #
+# forward, i.e. the "Version Packages" PR was merged on dev before this PR was #
+# opened.                                                                      #
+#                                                                              #
+# See: RELEASING.md - for more details on the release process.                 #
+# ============================================================================ #
+
+name: "Release Readiness"
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: ["release"]
+
+concurrency:
+  group: "release-readiness-${{ github.ref }}"
+  cancel-in-progress: true
+
+permissions:
+  contents: "read"
+
+jobs:
+  version-gate:
+    name: "Version Gate"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 5
+
+    steps:
+      - name: "Setup: Checkout repository"
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: "Setup: Fetch release branch"
+        run: "git fetch origin release"
+
+      - name: "Run: Compare version against release"
+        run: |
+          PR_VERSION=$(node -p "require('./package.json').version")
+          git show origin/release:package.json > /tmp/release-package.json
+          RELEASE_VERSION=$(node -p "require('/tmp/release-package.json').version")
+
+          echo "PR version:      $PR_VERSION"
+          echo "release version: $RELEASE_VERSION"
+
+          node -e "
+            const isGreater = (a, b) => {
+              const pa = a.split('.').map(Number);
+              const pb = b.split('.').map(Number);
+
+              for (let i = 0; i < 3; i++) {
+                if ((pa[i] ?? 0) !== (pb[i] ?? 0)) return (pa[i] ?? 0) > (pb[i] ?? 0);
+              }
+
+              return false;
+            };
+
+            if (!isGreater('$PR_VERSION', '$RELEASE_VERSION')) {
+              console.error('::error::Package version ($PR_VERSION) is not greater than the version already on release ($RELEASE_VERSION).');
+              console.error('::error::Merge the \"Version Packages\" PR on dev (see version.yaml) before opening this PR.');
+
+              process.exit(1);
+            }
+          "

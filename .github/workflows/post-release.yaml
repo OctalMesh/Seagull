@@ -1,0 +1,138 @@
+# ============================================================================ #
+#                             Post-Release Workflow                            #
+# ============================================================================ #
+# Runs on every push to release, i.e. right after a dev -> release PR merges.  #
+# Two independent jobs:                                                        #
+#                                                                              #
+#  - tag-release: if the version on release doesn't have a tag yet, cuts       #
+#    "vX.Y.Z" and opens a DRAFT GitHub Release with the changelog for that     #
+#    version pre-filled. Publishing to npm is a separate, deliberate step -    #
+#    it only happens once a maintainer clicks "Publish" on that draft, which   #
+#    fires publish.yaml. Already-tagged versions (e.g. a release-only hotfix   #
+#    commit that didn't bump the version) are skipped.                         #
+#                                                                              #
+#  - sync-dev: merges release straight back into dev so the merge commit and   #
+#    any version-bump commits never have to be reconciled by hand. Requires    #
+#    dev's branch protection to allow this workflow's token to push directly.  #
+#                                                                              #
+# See: RELEASING.md - for more details on the release process.                 #
+# ============================================================================ #
+
+name: "Post-Release"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["release"]
+
+permissions:
+  contents: "read"
+
+jobs:
+  tag-release:
+    name: "Tag & Draft Release"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 10
+    permissions:
+      contents: "write"
+
+    steps:
+      - name: "Setup: Checkout repository"
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: "Run: Read version"
+        id: "info"
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: "Run: Check for existing tag"
+        id: "tag-check"
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/v${{ steps.info.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: "Run: Build release notes"
+        id: "build-notes"
+        if: steps.tag-check.outputs.exists != 'true'
+        run: |
+          VERSION="${{ steps.info.outputs.version }}"
+          NOTES=/tmp/release-notes.md
+          : > "$NOTES"
+
+          extract_section() {
+            awk -v ver="## $VERSION" '
+              $0 == ver { found=1; next }
+              found && /^## / { exit }
+              found { print }
+            ' "$1"
+          }
+
+          for entry in "@octalmesh/seagull:CHANGELOG.md" \
+                       "@octalmesh/seagull-core:packages/core/CHANGELOG.md" \
+                       "@octalmesh/seagull-cli:packages/cli/CHANGELOG.md" \
+                       "@octalmesh/seagull-docs:packages/docs/CHANGELOG.md"; do
+            pkg="${entry%%:*}"
+            file="${entry#*:}"
+            [ -f "$file" ] || continue
+
+            section=$(extract_section "$file")
+            [ -z "$(echo "$section" | tr -d '[:space:]')" ] && continue
+
+            echo "### $pkg" >> "$NOTES"
+            echo "$section" >> "$NOTES"
+            echo "" >> "$NOTES"
+          done
+
+          if [ ! -s "$NOTES" ]; then
+            echo "_No changelog entries found for v$VERSION._" > "$NOTES"
+          fi
+
+      - name: "Run: Create draft release"
+        if: steps.tag-check.outputs.exists != 'true'
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: "v${{ steps.info.outputs.version }}"
+          name: "v${{ steps.info.outputs.version }}"
+          target_commitish: "release"
+          body_path: "/tmp/release-notes.md"
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sync-dev:
+    name: "Sync Dev"
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 10
+    permissions:
+      contents: "write"
+
+    steps:
+      - name: "Setup: Checkout repository"
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: "Setup: Git identity"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: "Run: Merge release into dev"
+        run: |
+          git fetch origin dev release
+          git checkout -B dev origin/dev
+
+          if ! git merge --no-ff origin/release -m "chore: sync release into dev [ci-skip]"; then
+            echo "::error::Merging release into dev produced conflicts - resolve them manually with a regular PR."
+            exit 1
+          fi
+
+          git push origin dev
