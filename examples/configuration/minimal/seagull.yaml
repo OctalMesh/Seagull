@@ -1,0 +1,53 @@
+# ============================================================================ #
+#                            Minimal config example                            #
+# ============================================================================ #
+# The smallest config that passes validation: one contract, one generator,     #
+# every optional field left at its default. Everything left out here (paths,   #
+# specFormat, per-artifact overrides, custom README templates, ...) is         #
+# covered in ../multiservice/seagull.yaml instead.                             #
+# ============================================================================ #
+
+configVersion: 1
+
+github:
+  owner: "your-org"
+  repo: "your-contracts-repo"
+
+publishing:
+  branch: "sdk/svc-{service}/{id}"
+  tag: "svc-{service}-{id}-v{version}"
+  repositoryUrl: "https://github.com/{github.owner}/{github.repo}"
+
+  npm:
+    registry: "https://registry.npmjs.org"
+    access: "public"
+
+  maven:
+    repositoryId: "github"
+    repositoryUrl: "https://maven.pkg.github.com/{github.owner}/{github.repo}"
+
+docs:
+  server:
+    host: "localhost"
+    port: 8080
+
+  metadata:
+    title: "Your API Docs"
+    description: "Generated API documentation"
+    favicon: "/favicon.ico"
+    baseServerUrl: "https://api.example.com"
+
+generators:
+  ts-client:
+    tool: "openapi-generator"
+    generator: "typescript-fetch"
+    lang: "typescript"
+    kind: "client"
+    package: "@your-org/{service}-client"
+
+contracts:
+  - name: "auth"
+    title: "Auth Service API"
+    entrypoint: "specs/auth/openapi.yaml"
+    artifacts:
+      - "ts-client"

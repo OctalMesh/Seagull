@@ -1,0 +1,133 @@
+# ============================================================================ #
+#                 Full-featured config - multiservice example                  #
+# ============================================================================ #
+# Every seagull config feature in one file: multiple contracts, multiple       #
+# generators, a YAML anchor shared across generators, bundling into more than  #
+# one spec format, a custom README template, and per-generator /               #
+# per-contract-artifact publishing overrides. Copy what you need - most real   #
+# configs use a subset of this.                                                #
+# ============================================================================ #
+
+configVersion: 1
+
+github:
+  owner: "your-org"
+  repo: "your-contracts-repo"
+
+# A free-form tree for naming templates - nest however deep is useful, every
+# leaf is addressable as {vars.a.b.c}.
+vars:
+  org: "your-npm-scope"
+  platform: "web"
+
+paths:
+  dist: "dist"
+  # Bundle into BOTH formats at once - "json" first makes it the "primary"
+  # format SDK generation and the docs site actually read from; "yaml" is
+  # bundled alongside it as an extra static artifact (e.g. for consumers who
+  # prefer reviewing/diffing YAML specs). A single value (`specFormat: yaml`)
+  # works too, if you only want one format.
+  specFormat:
+    - "json"
+    - "yaml"
+
+docs:
+  server:
+    host: "localhost"
+    port: 8080
+
+  metadata:
+    title: "Some API Docs"
+    description: "Generated documentation for every service contract"
+    favicon: "/favicon.ico"
+    baseServerUrl: "https://api.example.com"
+
+publishing:
+  branch: "sdk/svc-{service}/{id}"
+  tag: "svc-{service}-{id}-v{version}"
+  repositoryUrl: "https://github.com/{github.owner}/{github.repo}"
+
+  npm:
+    registry: "https://npm.pkg.github.com"
+    access: "restricted"
+
+  maven:
+    repositoryId: "github"
+    repositoryUrl: "https://maven.pkg.github.com/{github.owner}/{github.repo}"
+
+# A YAML anchor, reused across generators via the `<<: *defaults` merge key,
+# avoids repeating `lang:` on every TypeScript recipe below.
+_ts_defaults: &ts_defaults
+  lang: "typescript"
+
+generators:
+  # openapi-typescript recipe: lightweight, types-only server-side bindings.
+  ts-server:
+    <<: *ts_defaults
+    tool: "openapi-typescript"
+    kind: "server"
+    package: "@{vars.org}/{service}-server"
+    # A custom README template overrides the built-in default for this
+    # generator.
+    readme: "readme-templates/ts-server.md"
+
+  # openapi-generator-cli recipe: a full TypeScript fetch client.
+  ts-client:
+    <<: *ts_defaults
+    tool: "openapi-generator"
+    generator: "typescript-fetch"
+    kind: "client"
+    package: "@{vars.org}/{service}-client"
+
+    additionalProperties:
+      supportsES6: true
+
+    # e.g. Overrides the default npm registry for this artifact only.
+    publishing:
+      npm:
+        registry: "https://registry.internal.example.com"
+
+  # openapi-generator-cli recipe: a Java client, published to Maven.
+  java-client:
+    tool: "openapi-generator"
+    generator: "java"
+    lang: "java"
+    kind: "client"
+
+    maven:
+      groupId: "com.{vars.org}.{service}"
+      artifactId: "{service}-client"
+
+contracts:
+  - name: "auth"
+    title: "Auth Service API"
+    entrypoint: "specs/auth/openapi.yaml"
+    artifacts:
+      - "ts-server"
+      - "ts-client"
+
+  - name: "catalog"
+    title: "Catalog Service API"
+    entrypoint: "specs/catalog/openapi.yaml"
+    artifacts:
+      - "ts-server"
+      - "ts-client"
+
+  - name: "payment"
+    title: "Payment Service API"
+    entrypoint: "specs/payment/openapi.yaml"
+    artifacts:
+      - "ts-server"
+      # This contract needs a differently-configured java-client than the shared
+      # recipe above: `as` renames the output folder/branch/tag so it doesn't
+      # collide with a plain `java-client` artifact elsewhere, and `overrides`
+      # layers extra fields onto the `java-client` recipe - only what differs
+      # needs repeating.
+      - generator: "java-client"
+        as: "java-client-legacy"
+        overrides:
+          generator: "java-legacy-template"
+          additionalProperties:
+            library: "jersey2"
+          publishing:
+            branch: "custom/{service}-{id}-branch"
