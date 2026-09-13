@@ -1,5 +1,13 @@
 # @octalmesh/seagull-core
 
+## 0.1.1
+
+### Patch Changes
+
+- ec5c83b: Add LICENSE file to individual npm packages.
+- 71ab054: Expand supported Node.js and pnpm version ranges in `engines` to improve
+  compatibility.
+
 ## 0.1.0
 
 ### Minor Changes

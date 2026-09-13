@@ -1,5 +1,19 @@
 # @octalmesh/seagull
 
+## 0.1.1
+
+### Patch Changes
+
+- 71ab054: Expand supported Node.js and pnpm version ranges in `engines` to improve
+  compatibility.
+- 0106062: Fix CI workflow issue with missing `test:run` script and prefix generated
+  release title with "Seagull".
+- Updated dependencies [ec5c83b]
+- Updated dependencies [71ab054]
+  - @octalmesh/seagull-cli@0.1.1
+  - @octalmesh/seagull-core@0.1.1
+  - @octalmesh/seagull-docs@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
