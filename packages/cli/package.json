@@ -1,6 +1,6 @@
 {
   "name": "@octalmesh/seagull-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Seagull's command-line interface (CLI).",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",
