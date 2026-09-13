@@ -12,7 +12,7 @@
 # See: RELEASING.md - for more details on the release process.                 #
 # ============================================================================ #
 
-name: "Publish"
+name: "Releasing: Publish"
 
 on:
   release:

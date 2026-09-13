@@ -12,7 +12,7 @@
 # Note: skip tags are ignored for scheduled runs.                              #
 # ============================================================================ #
 
-name: "CodeQL"
+name: "CI: CodeQL"
 
 on:
   workflow_dispatch:

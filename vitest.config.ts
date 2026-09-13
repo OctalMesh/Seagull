@@ -16,11 +16,18 @@ export default defineConfig({
     environment: "node",
     passWithNoTests: true,
     globals: true,
-    reporters: ["default", ["html", { singleFile: true }]],
+    reporters:
+      process.env.GITHUB_ACTIONS === "true"
+        ? ["default", ["html", { singleFile: true }], "github-actions"]
+        : ["default", ["html", { singleFile: true }]],
+    outputFile: {
+      html: ".vitest/index.html",
+    },
 
     coverage: {
       provider: "v8",
-      reporter: ["text", "html", "lcov"],
+      reporter: ["text", "html", "lcov", "json-summary", "json"],
+      reportOnFailure: true,
       include: ["{,packages/*/}src/**/*.?(c|m)[jt]s?(x)"],
       exclude: [
         "**/*.{test,spec}.ts",

@@ -9,7 +9,7 @@
 #   [quality-skip] - skips this workflow only                                  #
 # ============================================================================ #
 
-name: "Quality"
+name: "CI: Quality"
 
 on:
   workflow_dispatch:

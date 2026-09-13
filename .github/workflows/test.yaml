@@ -9,7 +9,7 @@
 #   [test-skip] - skips this workflow only                                     #
 # ============================================================================ #
 
-name: "Test"
+name: "CI: Test"
 
 on:
   workflow_dispatch:
@@ -66,6 +66,10 @@ jobs:
     runs-on: "ubuntu-latest"
     timeout-minutes: 30
 
+    permissions:
+      contents: "read"
+      pull-requests: "write"
+
     steps:
       - name: "Setup: Checkout repository"
         uses: actions/checkout@v7
@@ -86,3 +90,11 @@ jobs:
 
       - name: "Run: Test suite"
         run: "pnpm run test"
+
+      - name: "Run: Coverage"
+        if: always() && github.event_name == 'pull_request'
+        run: "pnpm run test:coverage"
+
+      - name: "Run: Report coverage"
+        if: always() && github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2

@@ -24,7 +24,7 @@
 # See: RELEASING.md - for more details on the release process.                 #
 # ============================================================================ #
 
-name: "Post-Release"
+name: "Releasing: Post-Release"
 
 on:
   workflow_dispatch:
@@ -80,6 +80,8 @@ jobs:
             ' "$1"
           }
 
+          FIRST=true
+
           for entry in "@octalmesh/seagull:CHANGELOG.md" \
                        "@octalmesh/seagull-core:packages/core/CHANGELOG.md" \
                        "@octalmesh/seagull-cli:packages/cli/CHANGELOG.md" \
@@ -91,9 +93,21 @@ jobs:
             section=$(extract_section "$file")
             [ -z "$(echo "$section" | tr -d '[:space:]')" ] && continue
 
-            echo "### $pkg" >> "$NOTES"
-            echo "$section" >> "$NOTES"
-            echo "" >> "$NOTES"
+            OPEN=""
+            if [ "$FIRST" = true ]; then
+              OPEN=" open"
+              FIRST=false
+            fi
+
+            {
+              echo "<details$OPEN>"
+              echo "<summary><strong>$pkg</strong></summary>"
+              echo ""
+              echo "$section"
+              echo ""
+              echo "</details>"
+              echo ""
+            } >> "$NOTES"
           done
 
           if [ ! -s "$NOTES" ]; then
