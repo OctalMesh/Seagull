@@ -1,6 +1,6 @@
 {
   "name": "@octalmesh/seagull-cli",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Seagull's pipeline commands and commander program - bundled into @octalmesh/seagull.",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",

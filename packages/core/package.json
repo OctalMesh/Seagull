@@ -1,6 +1,6 @@
 {
   "name": "@octalmesh/seagull-core",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "The Seagull engine - config loading and SDK generators - as an internal library.",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",
