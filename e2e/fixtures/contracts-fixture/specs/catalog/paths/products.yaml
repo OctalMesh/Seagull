@@ -1,0 +1,20 @@
+get:
+  operationId: "listProducts"
+  summary: "List catalog products"
+  security: []
+
+  tags:
+    - "Catalog"
+
+  responses:
+    "200":
+      description: "A page of products"
+      content:
+        application/json:
+          schema:
+            type: "array"
+            items:
+              $ref: "../components/schemas/Product.yaml"
+
+    "400":
+      $ref: "../../shared/components/responses/Unauthorized.yaml"

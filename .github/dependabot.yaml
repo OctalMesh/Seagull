@@ -1,0 +1,132 @@
+# ============================================================================ #
+#                        Dependabot Configuration File                         #
+# ============================================================================ #
+# This file defines the Dependabot configuration for this project. It keeps    #
+# both pnpm dependencies and GitHub Actions up to date by opening pull         #
+# requests on a weekly schedule, grouped by ecosystem.                         #
+#                                                                              #
+# See: https://dependabot.com                                                  #
+# ============================================================================ #
+
+version: 2
+
+updates:
+  # Keep pnpm workspace dependencies up to date
+  - package-ecosystem: "npm"
+    directory: "/"
+    target-branch: "dev"
+    open-pull-requests-limit: 5
+
+    # Runs every Monday at 6:00 AM UTC
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+
+    reviewers:
+      - "OctalMesh/development"
+
+    labels:
+      - "Dependencies"
+
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+    groups:
+      # TypeScript language + its ESLint integration
+      typescript:
+        patterns:
+          - "typescript"
+          - "typescript-eslint"
+
+      # ESLint ecosystem
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@eslint/*"
+
+      # Prettier ecosystem
+      prettier:
+        patterns:
+          - "prettier"
+          - "prettier-*"
+          - "@trivago/prettier-*"
+
+      # Vite/Vitest test toolchain
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+          - "vite"
+          - "vite-*"
+          - "@vitejs/*"
+
+      # Build tooling (bundling, config loading)
+      build-tooling:
+        patterns:
+          - "tsdown"
+          - "jiti"
+
+      # Changesets (versioning/publishing pipeline itself)
+      changesets:
+        patterns:
+          - "@changesets/*"
+
+      # OpenAPI toolchain
+      openapi-toolchain:
+        patterns:
+          - "@openapitools/*"
+          - "@redocly/*"
+          - "openapi-typescript"
+
+      # @types/* packages
+      types:
+        patterns:
+          - "@types/*"
+
+    # Ignore major version updates for critical dependencies to prevent breaking
+    # changes without manual review
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
+
+      - dependency-name: "@openapitools/openapi-generator-cli"
+        update-types: ["version-update:semver-major"]
+
+      - dependency-name: "@redocly/cli"
+        update-types: ["version-update:semver-major"]
+
+      - dependency-name: "openapi-typescript"
+        update-types: ["version-update:semver-major"]
+
+  # Keep GitHub Actions up to date
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "dev"
+    open-pull-requests-limit: 5
+
+    # Runs every Monday at 6:00 AM UTC
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+
+    reviewers:
+      - "OctalMesh/development"
+
+    labels:
+      - "Dependencies"
+
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+    groups:
+      github-actions:
+        patterns:
+          - "*"

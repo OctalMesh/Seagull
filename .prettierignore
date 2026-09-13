@@ -111,6 +111,7 @@ yarn-error.log*
 
 # Testing
 coverage/
+.vitest/
 
 # TypeScript
 *.tsbuildinfo

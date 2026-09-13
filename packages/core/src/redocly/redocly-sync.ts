@@ -31,7 +31,9 @@ interface RedoclyBase {
  */
 export async function syncRedoclyConfig(config: ResolvedConfig): Promise<void> {
   const basePath = path.join(config.rootDir, "redocly.base.yaml");
-  const base = parseYaml(await readFile(basePath, "utf8")) as RedoclyBase;
+  const base = parseYaml(await readFile(basePath, "utf8"), {
+    merge: true,
+  }) as RedoclyBase;
 
   const apis = Object.fromEntries(
     config.contracts.map((contract) => {

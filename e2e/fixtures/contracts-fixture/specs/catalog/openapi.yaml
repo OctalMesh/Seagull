@@ -1,0 +1,25 @@
+openapi: "3.1.0"
+
+info:
+  version: "0.2.0"
+  title: "Catalog Service API"
+  description: "Product catalog browsing operations for the OctalMesh web shop."
+  license:
+    name: "MIT"
+    url: "https://opensource.org/license/MIT"
+
+servers:
+  - url: "/api"
+
+tags:
+  - name: "Catalog"
+    description: "Product catalog operations."
+
+paths:
+  /products:
+    $ref: "./paths/products.yaml"
+
+components:
+  schemas:
+    Product:
+      $ref: "./components/schemas/Product.yaml"

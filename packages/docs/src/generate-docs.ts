@@ -2,7 +2,11 @@ import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 
-import type { ResolvedConfig } from "@octalmesh/seagull-core";
+import {
+  type ResolvedConfig,
+  primarySpecFormat,
+  specFilename,
+} from "@octalmesh/seagull-core";
 
 /**
  * Generates the documentation website for every contract into `dist/docs`.
@@ -12,13 +16,15 @@ import type { ResolvedConfig } from "@octalmesh/seagull-core";
 export async function generateDocsSite(config: ResolvedConfig): Promise<void> {
   const output = config.paths.docs;
   const specsOutput = join(output, "specs");
+  const specFormat = primarySpecFormat(config.paths.specFormat);
 
   await rm(output, { recursive: true, force: true });
   await mkdir(specsOutput, { recursive: true });
 
   for (const contract of config.contracts) {
-    const source = join(config.paths.specs, `${contract.name}.json`);
-    const target = join(specsOutput, `${contract.name}.json`);
+    const filename = specFilename(contract.name, specFormat);
+    const source = join(config.paths.specs, filename);
+    const target = join(specsOutput, filename);
     const contents = await readFile(source, "utf8");
 
     await writeFile(target, contents);
@@ -48,16 +54,19 @@ export async function generateDocsSite(config: ResolvedConfig): Promise<void> {
   await copyFile(scalarScriptPath, scalarTarget);
   console.log(`Copied Scalar script to ${scalarTarget}`);
 
+  // Scalar's parser reads either format straight off the URL - no format
+  // negotiation needed here, just point it at whatever extension the specs
+  // were actually bundled with (see `paths.specFormat`).
   const sources = config.contracts
-    .map(
-      (contract, index) => `{
+    .map((contract, index) => {
+      const filename = specFilename(contract.name, specFormat);
+
+      return `{
       title: ${JSON.stringify(contract.title)},
       slug: ${JSON.stringify(contract.name)},
-      url: "./specs/${contract.name}.json"${
-        index === 0 ? ",\n      default: true" : ""
-      }
-    }`,
-    )
+      url: "./specs/${filename}"${index === 0 ? ",\n      default: true" : ""}
+    }`;
+    })
     .join(",\n");
 
   const { metadata } = config.docs;
@@ -78,13 +87,13 @@ export async function generateDocsSite(config: ResolvedConfig): Promise<void> {
     <!-- Initialize the API Reference -->
     <script>
       Scalar.createApiReference("#app", {
-        baseServerURL: "${metadata.baseServerUrl}",
-        favicon: "${metadata.favicon}",
+        baseServerURL: ${JSON.stringify(metadata.baseServerUrl)},
+        favicon: ${JSON.stringify(metadata.favicon)},
         metaData: {
-          title: "${metadata.title}",
-          description: "${metadata.description}",
-          ogTitle: "${metadata.title}",
-          ogDescription: "${metadata.description}",
+          title: ${JSON.stringify(metadata.title)},
+          description: ${JSON.stringify(metadata.description)},
+          ogTitle: ${JSON.stringify(metadata.title)},
+          ogDescription: ${JSON.stringify(metadata.description)},
         },
         layout: "classic",
         darkMode: true,

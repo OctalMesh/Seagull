@@ -8,3 +8,7 @@ contact_links:
   - name:  "📣 Socials"
     about: "Join us on social media platforms"
     url:   "https://links.octalmesh.com/"
+
+  - name: "🧑‍💻 Developers Portal"
+    about: "Check out our developers portal for more information"
+    url: "https://developers.octalmesh.com/"

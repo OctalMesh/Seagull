@@ -12,12 +12,18 @@ import tseslint from "typescript-eslint";
  *      ESLint documentation}
  */
 export default defineConfig([
-  globalIgnores(["**/dist/**", "**/node_modules/**"]),
+  globalIgnores([
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/coverage/**",
+    "**/.vitest/**",
+  ]),
 
   {
     files: [
       "{,packages/*/}src/**/*.ts",
-      "{,packages/*/}*.config.?(c|m)[jt]s?(x)",
+      "{,packages/*/}*.config.ts",
+      "e2e/**/*.ts",
     ],
     languageOptions: {
       ecmaVersion: "latest",

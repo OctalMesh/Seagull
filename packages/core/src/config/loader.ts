@@ -4,6 +4,7 @@ import path from "node:path";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 
+import { assertSafeRefName } from "../git/git";
 import {
   type ArtifactRefInput,
   type ContractInput,
@@ -29,7 +30,9 @@ import type {
  * @returns The validated (but not yet resolved) raw config.
  */
 function readRawConfig(configPath: string): RootConfigInput {
-  const raw: unknown = parseYaml(readFileSync(configPath, "utf8"));
+  const raw: unknown = parseYaml(readFileSync(configPath, "utf8"), {
+    merge: true,
+  });
   const result = rootConfigSchema.safeParse(raw);
 
   if (!result.success) {
@@ -170,18 +173,29 @@ function resolveArtifactRef(
  * @param rootPublishing      - The required root-level `publishing:` config
  *                              from the config file.
  * @param context             - The flattened template context for this artifact
- *                              (`service`, `id`, `github.*`, `vars.*`).
+ *                              (`service`, `id`, `vars.*`).
+ * @param artifactLabel       - `"<contract>/<artifact id>"`, used only to
+ *                              identify the offending artifact in the error
+ *                              thrown when `branch` resolves unsafely - see
+ *                              {@link assertSafeRefName}.
  * @returns The fully resolved publishing conventions for this artifact.
  */
 function resolvePublishing(
   generatorPublishing: PublishingOverrideInput | undefined,
   rootPublishing: PublishingInput,
   context: Record<string, string>,
+  artifactLabel: string,
 ): ResolvedPublishing {
   const merged = applyPublishingOverride(rootPublishing, generatorPublishing);
+  const branch = interpolate(merged.branch, context);
+
+  assertSafeRefName(
+    branch,
+    `publishing.branch for artifact "${artifactLabel}"`,
+  );
 
   return {
-    branch: interpolate(merged.branch, context),
+    branch,
     tagTemplate: merged.tag,
     repositoryUrl: interpolate(merged.repositoryUrl, context),
     npmRegistry: interpolate(merged.npm.registry, context),
@@ -203,7 +217,7 @@ function resolvePublishing(
  * @param sdkDir          - Absolute path to the SDK output root (`<dist>/sdk`).
  * @param contractName    - The owning contract's name.
  * @param contractContext - The flattened template context for this contract
- *                          (`service`, `github.*`, `vars.*` - not yet `id`).
+ *                          (`service`, `vars.*` - not yet `id`).
  * @param rootPublishing  - The required root-level `publishing:` config from
  *                          the config file.
  * @returns The fully resolved artifact.
@@ -219,7 +233,12 @@ function resolveArtifact(
 ): ResolvedArtifact {
   const context = { ...contractContext, id };
   const resolved = interpolateDeep(def, context);
-  const publishing = resolvePublishing(def.publishing, rootPublishing, context);
+  const publishing = resolvePublishing(
+    def.publishing,
+    rootPublishing,
+    context,
+    `${contractName}/${id}`,
+  );
 
   return {
     id,
@@ -250,8 +269,6 @@ function resolveArtifact(
  *                         resolved relative to this.
  * @param sdkDir         - Absolute path to the SDK output root (`<dist>/sdk`).
  * @param generators     - The full `generators:` map from the raw config.
- * @param githubCtx      - `{ owner, repo }`, exposed to templates as
- *                         `{github.owner}`/`{github.repo}`.
  * @param vars           - The `vars:` tree from the raw config, exposed as
  *                         `{vars.*}`.
  * @param rootPublishing - The required root-level `publishing:` config from the
@@ -263,13 +280,11 @@ function resolveContract(
   rootDir: string,
   sdkDir: string,
   generators: RootConfigInput["generators"],
-  githubCtx: { owner: string; repo: string },
   vars: RootConfigInput["vars"],
   rootPublishing: PublishingInput,
 ): ResolvedContract {
   const context = buildTemplateContext({
     service: input.name,
-    github: githubCtx,
     vars,
   });
 
@@ -332,7 +347,6 @@ export function loadConfig(configPath: string): ResolvedConfig {
       rootDir,
       sdkDir,
       raw.generators,
-      raw.github,
       raw.vars,
       raw.publishing,
     ),
@@ -341,8 +355,13 @@ export function loadConfig(configPath: string): ResolvedConfig {
   return {
     configVersion: raw.configVersion,
     rootDir,
-    paths: { dist: distDir, specs: specsDir, docs: docsDir, sdk: sdkDir },
-    github: raw.github,
+    paths: {
+      dist: distDir,
+      specs: specsDir,
+      docs: docsDir,
+      sdk: sdkDir,
+      specFormat: raw.paths.specFormat,
+    },
     vars: raw.vars,
     docs: raw.docs,
     contracts,

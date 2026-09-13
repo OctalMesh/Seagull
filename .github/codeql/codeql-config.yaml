@@ -1,0 +1,40 @@
+# ============================================================================ #
+#                              CodeQL Config (JS/TS)                           #
+# ============================================================================ #
+# Scopes analysis down to hand-written source - build output and vendored     #
+# fixtures produce noise CodeQL can't act on.                                  #
+# ============================================================================ #
+
+name: "Seagull Configuration"
+
+paths-ignore:
+  # Dependencies & build output
+
+  - "**/dist/**"
+  - "**/node_modules/**"
+  - "**/coverage/**"
+
+  # Config & tooling
+
+  - "*.config.{ts,js,mts,mjs,cts,cjs}"
+  - "*.setup.{ts,js,mts,mjs,cts,cjs}"
+
+  # Test files
+
+  - "**/testdata/**"
+  - "**/test-support/**"
+  - "**/__tests__/**"
+  - "**/__mocks__/**"
+  - "**/*.test.{ts,js,mts,mjs,cts,cjs}"
+  - "**/*.spec.{ts,js,mts,mjs,cts,cjs}"
+
+  # Type declarations
+
+  - "**/*.d.ts"
+
+queries:
+  - uses: "security-and-quality"
+
+query-filters:
+  - exclude:
+      tags contain: "correctness/unused-variable"

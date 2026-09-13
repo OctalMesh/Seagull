@@ -25,16 +25,23 @@ export const varsTreeSchema: z.ZodType<VarsTree> = z.lazy(() =>
   ),
 );
 
-export const githubSchema = z.object({
-  owner: z.string().min(1),
-  repo: z.string().min(1),
-});
+export const specFormatSchema = z.enum(["json", "yaml"]);
+export type SpecFormat = z.infer<typeof specFormatSchema>;
+
+export const specFormatListSchema = z
+  .union([specFormatSchema, z.array(specFormatSchema).min(1)])
+  .default("json")
+  .transform((value) => (Array.isArray(value) ? value : [value]))
+  .refine((formats) => new Set(formats).size === formats.length, {
+    message: "paths.specFormat entries must be unique",
+  });
 
 export const pathsSchema = z.object({
   dist: z.string().min(1).default("dist"),
   specs: z.string().min(1).optional(),
   docs: z.string().min(1).optional(),
   sdk: z.string().min(1).optional(),
+  specFormat: specFormatListSchema,
 });
 
 export const docsSchema = z.object({
@@ -73,8 +80,8 @@ export const mavenCoordsSchema = z.object({
 /**
  * Publishing conventions - git branch/tag naming, and where registry-backed
  * artifacts (npm, Maven) get pushed. Every field is a template supporting the
- * usual `{...}` placeholders (`{service}`, `{id}`, `{github.*}`, `{vars.*}`,
- * and for `tag` only, also `{version}`).
+ * usual `{...}` placeholders (`{service}`, `{id}`, `{vars.*}`, and for `tag`
+ * only, also `{version}`).
  *
  * Required at the root level - seagull has no built-in opinion on branch/tag
  * naming or which registry to use, so this has to come from the config, not
@@ -98,7 +105,7 @@ export const publishingSchema = z.object({
   /**
    * Template for the `repository.url` field written into generated
    * `package.json` (and shown in default README templates), e.g.
-   * `"https://github.com/{github.owner}/{github.repo}"`.
+   * `"https://github.com/{vars.repository.owner}/{vars.repository.repo}"`.
    */
   repositoryUrl: z.string().min(1),
   npm: z.object({
@@ -246,13 +253,12 @@ export const contractSchema = z.object({
 
 export const rootConfigSchema = z.object({
   /**
-   * The config schema version this file targets. Currently must be `1`
+   * The config schema version this file targets. Currently, must be `1`
    * (the only version that exists) - see {@link CONFIG_SCHEMA_VERSION}.
    */
   configVersion: z.literal(CONFIG_SCHEMA_VERSION),
-  github: githubSchema,
   vars: varsTreeSchema.default({}),
-  paths: pathsSchema.default({ dist: "dist" }),
+  paths: pathsSchema.default({ dist: "dist", specFormat: ["json"] }),
   docs: docsSchema,
   /**
    * Publishing conventions (branch/tag naming, registry URLs), applied to

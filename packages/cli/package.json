@@ -1,11 +1,10 @@
 {
   "name": "@octalmesh/seagull-cli",
-  "version": "0.0.2",
-  "description": "Seagull's pipeline commands and commander program - bundled into @octalmesh/seagull.",
+  "version": "0.1.0",
+  "description": "Seagull's command-line interface (CLI).",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",
-  "private": true,
-  "homepage": "https://github.com/OctalMesh/Seagull/tree/main/packages/cli",
+  "homepage": "https://developers.octalmesh.com/seagull",
   "type": "module",
   "repository": {
     "type": "git",
@@ -25,8 +24,11 @@
     },
     "./package.json": "./package.json"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
-    "node": ">=22.22.0"
+    "node": ">=24.0.0"
   },
   "scripts": {
     "build": "tsdown",

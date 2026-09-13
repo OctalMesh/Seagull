@@ -1,18 +1,18 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
   "changelog": "@changesets/cli/changelog",
+  "access": "public",
+  "baseBranch": "dev",
   "commit": false,
+  "updateInternalDependencies": "patch",
   "fixed": [
     [
       "@octalmesh/seagull",
-      "@octalmesh/seagull-core",
       "@octalmesh/seagull-cli",
+      "@octalmesh/seagull-core",
       "@octalmesh/seagull-docs"
     ]
   ],
   "linked": [],
-  "access": "public",
-  "baseBranch": "dev",
-  "updateInternalDependencies": "patch",
   "ignore": []
 }

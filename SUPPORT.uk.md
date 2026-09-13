@@ -5,11 +5,13 @@
   <h6>
     <a rel="noopener noreferrer" href="README.md">Readme</a>
     ·
-    <a rel="noopener noreferrer" href="CODE_OF_CONDUCT.md">Кодекс поведінки</a>
+    <a rel="noopener noreferrer" href="CODE_OF_CONDUCT.uk.md">Кодекс поведінки</a>
     ·
-    <a rel="noopener noreferrer" href="CONTRIBUTING.md">Внесок у проєкт</a>
+    <a rel="noopener noreferrer" href="CONTRIBUTING.uk.md">Внесок у проєкт</a>
     ·
-    <a rel="noopener noreferrer" href="SECURITY.md">Політика безпеки</a>
+    <a rel="noopener noreferrer" href="SECURITY.uk.md">Політика безпеки</a>
+    ·
+    <a rel="noopener noreferrer" href="RELEASING.md">Випуск</a>
     ·
     <a rel="noopener noreferrer" href="LICENSE.md">Ліцензія</a>
   </h6>

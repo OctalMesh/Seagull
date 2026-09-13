@@ -1,0 +1,14 @@
+type: "object"
+required:
+  - "id"
+  - "name"
+  - "priceCents"
+properties:
+  id:
+    type: "string"
+    format: "uuid"
+  name:
+    type: "string"
+  priceCents:
+    type: "integer"
+    format: "int32"

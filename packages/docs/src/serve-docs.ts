@@ -1,5 +1,5 @@
 import { createReadStream, statSync } from "node:fs";
-import { createServer } from "node:http";
+import { type Server, createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
 
 import type { ResolvedConfig } from "@octalmesh/seagull-core";
@@ -21,8 +21,12 @@ const MIME_TYPES: Record<string, string> = {
  * local previewing.
  *
  * @param config - The resolved seagull config.
+ * @returns The underlying `http.Server`, already listening, so callers that
+ *          need to (e.g. tests, or a future graceful-shutdown command) can
+ *          close it themselves via `server.close()`. The CLI's own `docs serve`
+ *          command ignores this and just lets the process block on it.
  */
-export async function serveDocsSite(config: ResolvedConfig): Promise<void> {
+export async function serveDocsSite(config: ResolvedConfig): Promise<Server> {
   const { host, port } = config.docs.server;
 
   const server = createServer((request, response) => {
@@ -79,4 +83,6 @@ export async function serveDocsSite(config: ResolvedConfig): Promise<void> {
       resolvePromise();
     });
   });
+
+  return server;
 }

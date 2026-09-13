@@ -1,6 +1,6 @@
-import type { VarsTree } from "./schema";
+import type { SpecFormat, VarsTree } from "./schema";
 
-export type { VarsTree } from "./schema";
+export type { SpecFormat, VarsTree } from "./schema";
 export type SdkTool = "openapi-generator" | "openapi-typescript";
 export type SdkLang = "typescript" | "go" | "java";
 export type SdkKind = "client" | "server";
@@ -114,9 +114,9 @@ export interface ResolvedConfig {
     specs: string;
     docs: string;
     sdk: string;
+    specFormat: SpecFormat[];
   };
 
-  github: { owner: string; repo: string };
   vars: VarsTree;
 
   docs: {

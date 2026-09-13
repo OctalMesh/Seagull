@@ -9,7 +9,6 @@ export interface DefaultReadmeArgs {
   contract: ResolvedContract;
   artifact: ResolvedArtifact;
   version: string;
-  github: { owner: string; repo: string };
   vars: VarsTree;
 }
 
@@ -22,27 +21,26 @@ export interface DefaultReadmeArgs {
  * come from the artifact's resolved `publishing:` config, so a repo that
  * overrides its registry sees that reflected here automatically.
  *
- * @param args - The contract, artifact, version, and github/vars coordinates
- *               to render for.
+ * @param args - The contract, artifact, version, and vars coordinates to render
+ *               for.
  * @returns The rendered README content.
  */
 export function renderDefaultReadme({
   contract,
   artifact,
   version,
-  github,
   vars,
 }: DefaultReadmeArgs): string {
   const header = `# ${contract.title} - ${label(artifact)}
 
-> Generated from \`${contract.entrypointRelative}\` in [${github.owner}/${github.repo}](https://github.com/${github.owner}/${github.repo}).
+> Generated from \`${contract.entrypointRelative}\` in ${artifact.publishing.repositoryUrl}.
 > Do not edit by hand - this package is regenerated and republished on every release.
 
 Version: \`${version}\`
 Source branch: \`${artifact.branch}\`
 `;
 
-  return `${header}\n${body(contract, artifact, version, github, vars)}\n`;
+  return `${header}\n${body(contract, artifact, version, vars)}\n`;
 }
 
 //<editor-fold desc="README Template Helpers" defaultstate="collapsed">
@@ -65,7 +63,6 @@ function body(
   contract: ResolvedContract,
   artifact: ResolvedArtifact,
   version: string,
-  github: { owner: string; repo: string },
   vars: VarsTree,
 ): string {
   switch (`${artifact.lang}-${artifact.kind}`) {
@@ -74,7 +71,7 @@ function body(
     case "typescript-server":
       return tsServer(artifact, version);
     case "go-client":
-      return goClient(contract, artifact, github, vars);
+      return goClient(contract, artifact, vars);
     case "go-server":
       return goServer(artifact);
     case "java-client":
@@ -146,7 +143,6 @@ app.post("/login", (req, res) => {
 function goClient(
   contract: ResolvedContract,
   artifact: ResolvedArtifact,
-  github: { owner: string; repo: string },
   vars: VarsTree,
 ): string {
   // Illustrative only - renders the tag template with a literal "<version>"
@@ -156,7 +152,6 @@ function goClient(
     artifact,
     contract.name,
     "<version>",
-    github,
     vars,
   );
 

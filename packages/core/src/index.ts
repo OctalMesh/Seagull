@@ -5,6 +5,11 @@ export {
   CONFIG_FILENAMES,
   resolveConfigPath,
 } from "./config/resolve-config-file";
+export {
+  parseBundledSpec,
+  primarySpecFormat,
+  specFilename,
+} from "./config/spec-format";
 export type {
   ResolvedArtifact,
   ResolvedArtifactEntry,
@@ -14,6 +19,7 @@ export type {
   SdkKind,
   SdkLang,
   SdkTool,
+  SpecFormat,
   VarsTree,
 } from "./config/types";
 
@@ -25,7 +31,9 @@ export { run, runSync } from "./process/exec";
 export { resolveBinPath } from "./process/resolve-bin";
 
 export {
+  assertSafeRefName,
   git,
+  gitRefNameSchema,
   readFileAtTag,
   remoteBranchExists,
   requireOk,

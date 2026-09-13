@@ -11,6 +11,8 @@
     ·
     <a rel="noopener noreferrer" href="SUPPORT.md">Support</a>
     ·
+    <a rel="noopener noreferrer" href="RELEASING.md">Releasing</a>
+    ·
     <a rel="noopener noreferrer" href="LICENSE.md">License</a>
   </h6>
 </div>

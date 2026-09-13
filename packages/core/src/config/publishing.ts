@@ -1,3 +1,4 @@
+import { assertSafeRefName } from "../git/git";
 import { buildTemplateContext, interpolate } from "./template";
 import type { ResolvedArtifact, VarsTree } from "./types";
 
@@ -13,8 +14,6 @@ import type { ResolvedArtifact, VarsTree } from "./types";
  *                       `{service}`.
  * @param version      - The resolved SDK version, exposed to the template as
  *                       `{version}`.
- * @param github       - `{ owner, repo }`, exposed as `{github.owner}`/
- *                       `{github.repo}`.
  * @param vars         - The config's `vars:` tree, exposed as `{vars.*}`.
  * @returns The rendered tag name.
  */
@@ -22,16 +21,21 @@ export function renderArtifactTag(
   artifact: ResolvedArtifact,
   contractName: string,
   version: string,
-  github: { owner: string; repo: string },
   vars: VarsTree,
 ): string {
   const context = buildTemplateContext({
     service: contractName,
     id: artifact.id,
     version,
-    github,
     vars,
   });
 
-  return interpolate(artifact.publishing.tagTemplate, context);
+  const tag = interpolate(artifact.publishing.tagTemplate, context);
+
+  assertSafeRefName(
+    tag,
+    `publishing.tag for artifact "${contractName}/${artifact.id}"`,
+  );
+
+  return tag;
 }

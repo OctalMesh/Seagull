@@ -8,8 +8,11 @@ import {
   OpenApiTypescriptGenerator,
   type ResolvedConfig,
   hashSpec,
+  parseBundledSpec,
+  primarySpecFormat,
   renderReadme,
   resolveVersion,
+  specFilename,
   syncRedoclyConfig,
 } from "@octalmesh/seagull-core";
 
@@ -48,6 +51,7 @@ export async function generateSdkCommand(
   }
 
   const versionCache = new Map<string, VersionInfo>();
+  const specFormat = primarySpecFormat(config.paths.specFormat);
 
   async function getVersionInfo(contractName: string): Promise<VersionInfo> {
     const cached = versionCache.get(contractName);
@@ -56,9 +60,12 @@ export async function generateSdkCommand(
       return cached;
     }
 
-    const specPath = path.join(config.paths.specs, `${contractName}.json`);
+    const specPath = path.join(
+      config.paths.specs,
+      specFilename(contractName, specFormat),
+    );
     const raw = await readFile(specPath, "utf8");
-    const spec = JSON.parse(raw) as BundledSpec;
+    const spec = parseBundledSpec(raw, specFormat) as BundledSpec;
 
     const info: VersionInfo = {
       version: resolveVersion(spec, contractName),
@@ -79,8 +86,10 @@ export async function generateSdkCommand(
       contract,
       artifact,
       version,
-      github: config.github,
-      specInputPath: path.join(config.paths.specs, `${contract.name}.json`),
+      specInputPath: path.join(
+        config.paths.specs,
+        specFilename(contract.name, specFormat),
+      ),
     });
 
     await writeFile(path.join(artifact.outputDir, "VERSION"), `${version}\n`);
@@ -91,7 +100,6 @@ export async function generateSdkCommand(
         contract,
         artifact,
         version,
-        github: config.github,
         vars: config.vars,
       }),
     );

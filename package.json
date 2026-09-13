@@ -1,10 +1,10 @@
 {
   "name": "@octalmesh/seagull",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Contract-first OpenAPI SDK, docs, and publishing pipeline - driven by a single seagull config.",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",
-  "homepage": "https://github.com/OctalMesh/Seagull",
+  "homepage": "https://developers.octalmesh.com/seagull",
   "type": "module",
   "keywords": [
     "octalmesh",
@@ -44,13 +44,13 @@
   },
   "packageManager": "pnpm@12.3.4",
   "engines": {
-    "node": ">=22.22.0",
-    "pnpm": ">=11.0.0"
+    "node": ">=24.0.0",
+    "pnpm": ">=12.0.0"
   },
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "^22.22.0",
+      "version": "^24.0.0",
       "onFail": "warn"
     }
   },
@@ -58,33 +58,43 @@
     "build": "pnpm --filter \"./packages/**\" run build && tsdown",
     "dev": "pnpm --filter \"./packages/**\" --parallel run dev",
     "typecheck": "pnpm --filter \"./packages/**\" run typecheck && tsc --noEmit",
-    "test": "vitest",
-    "test:run": "vitest run --passWithNoTests",
-    "test:watch": "vitest watch",
-    "test:ui": "vitest --ui",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "test": "pnpm run build && vitest run",
+    "test:watch": "pnpm run test:unit:watch",
+    "test:ui": "pnpm build && vitest --ui",
+    "test:coverage": "vitest run --project=\"unit:*\" --coverage",
+    "test:report": "vitest run --reporter=html",
+    "test:preview": "vite preview --outDir .vitest",
+    "test:unit": "vitest run --project=\"unit:*\"",
+    "test:unit:watch": "vitest --project=\"unit:*\"",
+    "test:unit:ui": "vitest --project=\"unit:*\" --ui",
+    "test:e2e": "pnpm build && vitest run --project=e2e",
+    "test:e2e:ui": "pnpm build && vitest --ui --project=e2e",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "changeset": "changeset",
-    "version": "changeset version",
-    "release": "pnpm publish",
+    "deps": "pnpm update --latest --recursive --interactive",
+    "deps:check": "pnpm outdated --recursive",
     "tree": "treee -I \"node_modules|.git|.idea|target|build|dist|dev-dist|bin|.project-structure.txt\" -a --dirs-first",
-    "tree:export": "pnpm run tree --silent > .project-structure.txt"
+    "tree:export": "pnpm run tree --silent > .project-structure.txt",
+    "changeset": "changeset add",
+    "changeset:status": "changeset status --verbose --since=dev",
+    "changeset:empty": "changeset add --empty",
+    "version": "changeset version && pnpm install --no-frozen-lockfile --lockfile-only",
+    "release": "pnpm run build && pnpm run test:run && pnpm run release:publish",
+    "release:dry": "pnpm -r publish --no-git-checks --provenance --dry-run",
+    "release:publish": "pnpm -r publish --no-git-checks --provenance"
   },
   "dependencies": {
     "@octalmesh/seagull-cli": "workspace:*",
     "@octalmesh/seagull-core": "workspace:*",
-    "@octalmesh/seagull-docs": "workspace:*",
-    "@openapitools/openapi-generator-cli": "^2.41.0",
-    "@redocly/cli": "^2.51.2",
-    "@scalar/api-reference": "^1.67.0",
-    "openapi-typescript": "^7.13.0"
+    "@octalmesh/seagull-docs": "workspace:*"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.7",
+    "@changesets/cli": "^3.0.2",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.5.1",
+    "@vitest/coverage-v8": "^5.0.0",
     "@vitest/ui": "^5.0.0",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
@@ -92,9 +102,10 @@
     "prettier": "^3.9.6",
     "prettier-plugin-yaml": "^1.3.0",
     "tree-node-cli": "^3.0.0",
-    "tsdown": "0.22.14",
+    "tsdown": "0.23.0",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.69.0",
+    "vite": "^8.3.0",
     "vitest": "^5.0.0"
   }
 }
