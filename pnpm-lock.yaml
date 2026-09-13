@@ -220,8 +220,8 @@ importers:
         specifier: ^2.9.1
         version: 2.9.1
       zod:
-        specifier: ^4.6.2
-        version: 4.6.2
+        specifier: ^4.6.4
+        version: 4.6.4
 
   packages/docs:
     dependencies:
@@ -230,7 +230,7 @@ importers:
         version: link:../core
       '@scalar/api-reference':
         specifier: ^1.67.0
-        version: 1.68.0(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(change-case@5.4.4)(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)(zod@4.6.2)
+        version: 1.68.0(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(change-case@5.4.4)(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)(zod@4.6.4)
 
 packages:
 
@@ -3144,33 +3144,36 @@ packages:
   zod@4.6.2:
     resolution: {integrity: sha512-lh5RCAGFa1Cm2hjtNwLQhSs/AsqdWnTQaBER9fEwN/88pSh7KOtJavtBx/0VlkN/uFd61SwYmljLMDAsHlvzBQ==}
 
+  zod@4.6.4:
+    resolution: {integrity: sha512-AXSD6hvGdvRjajG/l1cC+d6IrhH+sjmPKtYeQdJIK8MFJl3LyClzS+o/YsVC+zQZPupAaeH5skwwm8YqYH7BqA==}
+
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
 
-  '@ai-sdk/gateway@3.0.13(zod@4.6.2)':
+  '@ai-sdk/gateway@3.0.13(zod@4.6.4)':
     dependencies:
       '@ai-sdk/provider': 3.0.2
-      '@ai-sdk/provider-utils': 4.0.5(zod@4.6.2)
+      '@ai-sdk/provider-utils': 4.0.5(zod@4.6.4)
       '@vercel/oidc': 3.1.0
-      zod: 4.6.2
+      zod: 4.6.4
 
-  '@ai-sdk/provider-utils@4.0.5(zod@4.6.2)':
+  '@ai-sdk/provider-utils@4.0.5(zod@4.6.4)':
     dependencies:
       '@ai-sdk/provider': 3.0.2
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.1.1
-      zod: 4.6.2
+      zod: 4.6.4
 
   '@ai-sdk/provider@3.0.2':
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/vue@3.0.33(vue@3.5.42(typescript@6.0.3))(zod@4.6.2)':
+  '@ai-sdk/vue@3.0.33(vue@3.5.42(typescript@6.0.3))(zod@4.6.4)':
     dependencies:
-      '@ai-sdk/provider-utils': 4.0.5(zod@4.6.2)
-      ai: 6.0.33(zod@4.6.2)
+      '@ai-sdk/provider-utils': 4.0.5(zod@4.6.4)
+      ai: 6.0.33(zod@4.6.4)
       swrv: 1.2.0(vue@3.5.42(typescript@6.0.3))
       vue: 3.5.42(typescript@6.0.3)
     transitivePeerDependencies:
@@ -3818,9 +3821,9 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@scalar/agent-chat@0.12.30(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(change-case@5.4.4)(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)(zod@4.6.2)':
+  '@scalar/agent-chat@0.12.30(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(change-case@5.4.4)(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)(zod@4.6.4)':
     dependencies:
-      '@ai-sdk/vue': 3.0.33(vue@3.5.42(typescript@6.0.3))(zod@4.6.2)
+      '@ai-sdk/vue': 3.0.33(vue@3.5.42(typescript@6.0.3))(zod@4.6.4)
       '@scalar/api-client': 3.18.0(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(change-case@5.4.4)(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)
       '@scalar/components': 0.29.1(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)
       '@scalar/helpers': 0.11.3
@@ -3834,7 +3837,7 @@ snapshots:
       '@scalar/validation': 0.6.3
       '@scalar/workspace-store': 0.60.0(typescript@6.0.3)
       '@vueuse/core': 13.9.0(vue@3.5.42(typescript@6.0.3))
-      ai: 6.0.33(zod@4.6.2)
+      ai: 6.0.33(zod@4.6.4)
       js-base64: 3.9.3
       neverpanic: 0.0.8
       truncate-json: 3.0.1
@@ -3904,10 +3907,10 @@ snapshots:
       - typescript
       - universal-cookie
 
-  '@scalar/api-reference@1.68.0(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(change-case@5.4.4)(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)(zod@4.6.2)':
+  '@scalar/api-reference@1.68.0(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(change-case@5.4.4)(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)(zod@4.6.4)':
     dependencies:
       '@headlessui/vue': 1.7.23(vue@3.5.42(typescript@6.0.3))
-      '@scalar/agent-chat': 0.12.30(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(change-case@5.4.4)(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)(zod@4.6.2)
+      '@scalar/agent-chat': 0.12.30(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(change-case@5.4.4)(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)(zod@4.6.4)
       '@scalar/api-client': 3.18.0(axios@1.20.0(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2))(change-case@5.4.4)(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)
       '@scalar/blocks': 0.1.16(supports-color@10.2.2)(tailwindcss@4.3.3)(typescript@6.0.3)
       '@scalar/code-highlight': 0.4.5(supports-color@10.2.2)
@@ -4574,13 +4577,13 @@ snapshots:
 
   agent-base@9.0.0: {}
 
-  ai@6.0.33(zod@4.6.2):
+  ai@6.0.33(zod@4.6.4):
     dependencies:
-      '@ai-sdk/gateway': 3.0.13(zod@4.6.2)
+      '@ai-sdk/gateway': 3.0.13(zod@4.6.4)
       '@ai-sdk/provider': 3.0.2
-      '@ai-sdk/provider-utils': 4.0.5(zod@4.6.2)
+      '@ai-sdk/provider-utils': 4.0.5(zod@4.6.4)
       '@opentelemetry/api': 1.9.0
-      zod: 4.6.2
+      zod: 4.6.4
 
   ajv@6.15.0:
     dependencies:
@@ -6541,5 +6544,7 @@ snapshots:
       '@yuku-parser/binding-win32-x64': 0.9.5
 
   zod@4.6.2: {}
+
+  zod@4.6.4: {}
 
   zwitch@2.0.4: {}

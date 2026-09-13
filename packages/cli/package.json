@@ -1,10 +1,10 @@
 {
   "name": "@octalmesh/seagull-cli",
   "version": "0.0.2",
-  "description": "Seagull's pipeline commands and commander program - bundled into @octalmesh/seagull.",
+  "description": "Seagull's command-line interface (CLI).",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",
-  "homepage": "https://github.com/OctalMesh/Seagull/tree/main/packages/cli",
+  "homepage": "https://developers.octalmesh.com/seagull",
   "type": "module",
   "repository": {
     "type": "git",
