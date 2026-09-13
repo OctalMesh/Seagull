@@ -86,7 +86,6 @@ export async function generateSdkCommand(
       contract,
       artifact,
       version,
-      github: config.github,
       specInputPath: path.join(
         config.paths.specs,
         specFilename(contract.name, specFormat),
@@ -101,7 +100,6 @@ export async function generateSdkCommand(
         contract,
         artifact,
         version,
-        github: config.github,
         vars: config.vars,
       }),
     );

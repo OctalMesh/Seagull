@@ -5,11 +5,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { GenerateContext } from "../../../generator/types";
-import {
-  GITHUB,
-  makeArtifact,
-  makeContract,
-} from "../../../test-support/fixtures";
+import { makeArtifact, makeContract } from "../../../test-support/fixtures";
 import { MavenPomPatcher } from "./maven.patcher";
 
 function makeCtx(overrides: Partial<GenerateContext> = {}): GenerateContext {
@@ -22,7 +18,6 @@ function makeCtx(overrides: Partial<GenerateContext> = {}): GenerateContext {
       maven: { groupId: "com.octalmesh.auth", artifactId: "auth-client" },
     }),
     version: "1.0.0",
-    github: GITHUB,
     specInputPath: "/repo/dist/specs/auth.json",
     ...overrides,
   };

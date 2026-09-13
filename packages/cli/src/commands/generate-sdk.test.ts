@@ -259,7 +259,7 @@ describe("generateSdkCommand", () => {
     ).resolves.toBe("# Hello\n");
   });
 
-  it("passes contract/artifact/version/github/vars through to renderReadme", async () => {
+  it("passes contract/artifact/version/vars through to renderReadme", async () => {
     const outputDir = path.join(dir, "dist", "sdk", "auth", "ts-client");
     const config = makeConfig(dir, {
       vars: { org: "octalmesh" },
@@ -279,7 +279,6 @@ describe("generateSdkCommand", () => {
     expect(renderReadmeMock).toHaveBeenCalledWith(
       expect.objectContaining({
         version: "1.0.0",
-        github: config.github,
         vars: { org: "octalmesh" },
       }),
     );

@@ -20,7 +20,6 @@ function makeConfig(docsDir: string, port = 0): ResolvedConfig {
       sdk: path.join(path.dirname(docsDir), "sdk"),
       specFormat: ["json"],
     },
-    github: { owner: "OctalMesh", repo: "ows-contracts" },
     vars: {},
     docs: {
       server: { host: "127.0.0.1", port },

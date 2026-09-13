@@ -117,7 +117,6 @@ export interface ResolvedConfig {
     specFormat: SpecFormat[];
   };
 
-  github: { owner: string; repo: string };
   vars: VarsTree;
 
   docs: {

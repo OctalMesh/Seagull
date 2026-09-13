@@ -7,7 +7,7 @@
 - Version: `{version}`
 - Package: `{artifact.package}`
 - Org: `{vars.org}`
-- Repo: `{github.owner}/{github.repo}`
+- Repo: `{vars.repository.owner}/{vars.repository.repo}`
 
 ```ts
 import type { components } from "{artifact.package}";

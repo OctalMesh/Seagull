@@ -10,15 +10,14 @@
 
 configVersion: 1
 
-github:
-  owner: "your-org"
-  repo: "your-contracts-repo"
-
 # A free-form tree for naming templates - nest however deep is useful, every
 # leaf is addressable as {vars.a.b.c}.
 vars:
   org: "your-npm-scope"
   platform: "web"
+  repository:
+    owner: "your-org"
+    repo: "your-contracts-repo"
 
 paths:
   dist: "dist"
@@ -45,7 +44,7 @@ docs:
 publishing:
   branch: "sdk/svc-{service}/{id}"
   tag: "svc-{service}-{id}-v{version}"
-  repositoryUrl: "https://github.com/{github.owner}/{github.repo}"
+  repositoryUrl: "https://github.com/{vars.repository.owner}/{vars.repository.repo}"
 
   npm:
     registry: "https://npm.pkg.github.com"
@@ -53,7 +52,7 @@ publishing:
 
   maven:
     repositoryId: "github"
-    repositoryUrl: "https://maven.pkg.github.com/{github.owner}/{github.repo}"
+    repositoryUrl: "https://maven.pkg.github.com/{vars.repository.owner}/{vars.repository.repo}"
 
 # A YAML anchor, reused across generators via the `<<: *defaults` merge key,
 # avoids repeating `lang:` on every TypeScript recipe below.

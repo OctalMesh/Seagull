@@ -42,7 +42,6 @@ export async function publishSdkCommand(
       artifact,
       contract.name,
       version,
-      config.github,
       config.vars,
     );
 

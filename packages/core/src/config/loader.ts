@@ -173,7 +173,7 @@ function resolveArtifactRef(
  * @param rootPublishing      - The required root-level `publishing:` config
  *                              from the config file.
  * @param context             - The flattened template context for this artifact
- *                              (`service`, `id`, `github.*`, `vars.*`).
+ *                              (`service`, `id`, `vars.*`).
  * @param artifactLabel       - `"<contract>/<artifact id>"`, used only to
  *                              identify the offending artifact in the error
  *                              thrown when `branch` resolves unsafely - see
@@ -217,7 +217,7 @@ function resolvePublishing(
  * @param sdkDir          - Absolute path to the SDK output root (`<dist>/sdk`).
  * @param contractName    - The owning contract's name.
  * @param contractContext - The flattened template context for this contract
- *                          (`service`, `github.*`, `vars.*` - not yet `id`).
+ *                          (`service`, `vars.*` - not yet `id`).
  * @param rootPublishing  - The required root-level `publishing:` config from
  *                          the config file.
  * @returns The fully resolved artifact.
@@ -269,8 +269,6 @@ function resolveArtifact(
  *                         resolved relative to this.
  * @param sdkDir         - Absolute path to the SDK output root (`<dist>/sdk`).
  * @param generators     - The full `generators:` map from the raw config.
- * @param githubCtx      - `{ owner, repo }`, exposed to templates as
- *                         `{github.owner}`/`{github.repo}`.
  * @param vars           - The `vars:` tree from the raw config, exposed as
  *                         `{vars.*}`.
  * @param rootPublishing - The required root-level `publishing:` config from the
@@ -282,13 +280,11 @@ function resolveContract(
   rootDir: string,
   sdkDir: string,
   generators: RootConfigInput["generators"],
-  githubCtx: { owner: string; repo: string },
   vars: RootConfigInput["vars"],
   rootPublishing: PublishingInput,
 ): ResolvedContract {
   const context = buildTemplateContext({
     service: input.name,
-    github: githubCtx,
     vars,
   });
 
@@ -351,7 +347,6 @@ export function loadConfig(configPath: string): ResolvedConfig {
       rootDir,
       sdkDir,
       raw.generators,
-      raw.github,
       raw.vars,
       raw.publishing,
     ),
@@ -367,7 +362,6 @@ export function loadConfig(configPath: string): ResolvedConfig {
       sdk: sdkDir,
       specFormat: raw.paths.specFormat,
     },
-    github: raw.github,
     vars: raw.vars,
     docs: raw.docs,
     contracts,

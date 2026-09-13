@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { parse as parseYaml } from "yaml";
 
 import type { ResolvedConfig } from "../config/types";
-import { GITHUB, makeArtifact, makeContract } from "../test-support/fixtures";
+import { makeArtifact, makeContract } from "../test-support/fixtures";
 import { syncRedoclyConfig } from "./redocly-sync";
 
 function makeConfig(overrides: Partial<ResolvedConfig> = {}): ResolvedConfig {
@@ -20,7 +20,6 @@ function makeConfig(overrides: Partial<ResolvedConfig> = {}): ResolvedConfig {
       sdk: "/repo/dist/sdk",
       specFormat: ["json"],
     },
-    github: GITHUB,
     vars: {},
     docs: {
       server: { host: "localhost", port: 8080 },

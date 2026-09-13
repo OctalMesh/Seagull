@@ -5,11 +5,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { GenerateContext, PrepareContext } from "../../generator/types";
-import {
-  GITHUB,
-  makeArtifact,
-  makeContract,
-} from "../../test-support/fixtures";
+import { makeArtifact, makeContract } from "../../test-support/fixtures";
 
 const runMock = vi.fn((..._args: unknown[]) => Promise.resolve());
 const resolveBinPathMock = vi.fn(
@@ -101,7 +97,6 @@ describe("OpenApiTypescriptGenerator", () => {
           package: "@octalmesh/auth-server",
         }),
         version: "1.0.0",
-        github: GITHUB,
         specInputPath: "/repo/dist/specs/auth.json",
         ...overrides,
       };

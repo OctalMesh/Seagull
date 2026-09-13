@@ -10,7 +10,7 @@ OpenAPI spec.
 - **Version:** `{version}`
 - **Package:** `{artifact.package}`
 - **Org:** `{vars.org}`
-- **Source:** [`{github.owner}/{github.repo}`](https://github.com/{github.owner}/{github.repo})
+- **Source:** [`{vars.repository.owner}/{vars.repository.repo}`](https://github.com/{vars.repository.owner}/{vars.repository.repo})
 
 ## Usage
 
@@ -23,6 +23,6 @@ type User = components["schemas"]["User"];
 ## Publishing
 
 This package is published from
-[`{artifact.branch}`](https://github.com/{github.owner}/{github.repo}/tree/{artifact.branch})
+[`{artifact.branch}`](https://github.com/{vars.repository.owner}/{vars.repository.repo}/tree/{artifact.branch})
 and tagged `{artifact.tag}` on every version bump - see the parent repo's
 `seagull.yaml` for the full pipeline this came from.

@@ -13,17 +13,18 @@ import {
 const validPublishing = {
   branch: "sdk/svc-{service}/{id}",
   tag: "svc-{service}-{id}-v{version}",
-  repositoryUrl: "https://github.com/{github.owner}/{github.repo}",
+  repositoryUrl:
+    "https://github.com/{vars.repository.owner}/{vars.repository.repo}",
   npm: { registry: "https://npm.pkg.github.com", access: "public" as const },
   maven: {
     repositoryId: "github",
-    repositoryUrl: "https://maven.pkg.github.com/{github.owner}/{github.repo}",
+    repositoryUrl:
+      "https://maven.pkg.github.com/{vars.repository.owner}/{vars.repository.repo}",
   },
 };
 
 const minimalRootConfig = {
   configVersion: 1,
-  github: { owner: "OctalMesh", repo: "ows-contracts" },
   docs: {
     server: { host: "localhost", port: 8080 },
     metadata: {

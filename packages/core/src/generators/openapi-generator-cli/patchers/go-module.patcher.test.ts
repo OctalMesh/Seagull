@@ -5,11 +5,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { GenerateContext } from "../../../generator/types";
-import {
-  GITHUB,
-  makeArtifact,
-  makeContract,
-} from "../../../test-support/fixtures";
+import { makeArtifact, makeContract } from "../../../test-support/fixtures";
 import { GoModulePatcher } from "./go-module.patcher";
 
 function makeCtx(overrides: Partial<GenerateContext> = {}): GenerateContext {
@@ -23,7 +19,6 @@ function makeCtx(overrides: Partial<GenerateContext> = {}): GenerateContext {
       goPackageName: "authclient",
     }),
     version: "1.0.0",
-    github: GITHUB,
     specInputPath: "/repo/dist/specs/auth.json",
     ...overrides,
   };

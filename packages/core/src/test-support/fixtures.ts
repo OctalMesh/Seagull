@@ -63,5 +63,3 @@ export function makeContract(
     ...overrides,
   };
 }
-
-export const GITHUB = { owner: "OctalMesh", repo: "ows-contracts" };

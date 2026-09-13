@@ -9,14 +9,17 @@
 
 configVersion: 1
 
-github:
-  owner: "your-org"
-  repo: "your-contracts-repo"
+# A free-form tree for naming templates - nest however deep is useful, every
+# leaf is addressable as {vars.a.b.c}.
+vars:
+  repository:
+    owner: "your-org"
+    repo: "your-contracts-repo"
 
 publishing:
   branch: "sdk/svc-{service}/{id}"
   tag: "svc-{service}-{id}-v{version}"
-  repositoryUrl: "https://github.com/{github.owner}/{github.repo}"
+  repositoryUrl: "https://github.com/{vars.repository.owner}/{vars.repository.repo}"
 
   npm:
     registry: "https://registry.npmjs.org"
@@ -24,7 +27,7 @@ publishing:
 
   maven:
     repositoryId: "github"
-    repositoryUrl: "https://maven.pkg.github.com/{github.owner}/{github.repo}"
+    repositoryUrl: "https://maven.pkg.github.com/{vars.repository.owner}/{vars.repository.repo}"
 
 docs:
   server:

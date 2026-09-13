@@ -174,14 +174,12 @@ Create a config file at the root of your contracts repo (any of
 # Seagull config version
 configVersion: 1
 
-# GitHub repo info for publishing
-github:
-  owner: "your-org"
-  repo: "your-contracts-repo"
-
 # Custom variables to use in config
 vars:
   org: "your-npm-scope"
+  repository:
+    owner: "your-org"
+    repo: "your-contracts-repo"
 
 # Documentation configuration
 docs:
@@ -199,7 +197,7 @@ docs:
 publishing:
   branch: "sdk/svc-{service}/{id}"
   tag: "svc-{service}-{id}-v{version}"
-  repositoryUrl: "https://github.com/{github.owner}/{github.repo}"
+  repositoryUrl: "https://github.com/{vars.repository.owner}/{vars.repository.repo}"
 
   npm:
     registry: "https://registry.npmjs.org"
@@ -207,7 +205,7 @@ publishing:
 
   maven:
     repositoryId: "github"
-    repositoryUrl: "https://maven.pkg.github.com/{github.owner}/{github.repo}"
+    repositoryUrl: "https://maven.pkg.github.com/{vars.repository.owner}/{vars.repository.repo}"
 
 # Generators configuration used to produce SDK artifacts
 generators:
@@ -251,8 +249,8 @@ every generator/publishing/docs feature, plus an API walkthrough.
 - `generators:` - reusable recipes: a `tool` (`openapi-generator` or
   `openapi-typescript`), which `-g` template to use, and naming templates
   for the npm package / Go module / Maven coordinates. Any string field may
-  reference `{vars.some.nested.key}`, `{github.owner}`, `{github.repo}`, or
-  `{service}` (the current contract's `name`).
+  reference `{vars.some.nested.key}` or `{service}` (the current contract's
+  `name`).
 
 - `contracts:` - one entry per service (`name`, `title`, `entrypoint`, and which
   `generators:` it wants under `artifacts:`, by id). Two services don't need the
@@ -325,9 +323,9 @@ opinionated default nobody chose.
 
 ```yaml
 publishing:
-  branch: "sdk/svc-{service}/{id}"                                 # git branch each artifact publishes to
-  tag: "svc-{service}-{id}-v{version}"                             # git tag - the only field where {version} is available
-  repositoryUrl: "https://github.com/{github.owner}/{github.repo}" # git remote URL for pushing branches/tags
+  branch: "sdk/svc-{service}/{id}"                                                   # git branch each artifact publishes to
+  tag: "svc-{service}-{id}-v{version}"                                               # git tag - the only field where {version} is available
+  repositoryUrl: "https://github.com/{vars.repository.owner}/{vars.repository.repo}" # git remote URL for pushing branches/tags
 
   npm:
     registry: "https://npm.pkg.github.com"
@@ -335,7 +333,7 @@ publishing:
 
   maven:
     repositoryId: "github"
-    repositoryUrl: "https://maven.pkg.github.com/{github.owner}/{github.repo}"
+    repositoryUrl: "https://maven.pkg.github.com/{vars.repository.owner}/{vars.repository.repo}"
 ```
 
 Every field is a template - the same `{...}` engine as naming templates, plus
@@ -402,7 +400,6 @@ few more:
 | `{title}`                                                  | The contract's `title`                           |
 | `{version}`                                                | The resolved SDK version                         |
 | `{vars.*}`                                                 | Anything under `vars:`                           |
-| `{github.owner}` / `{github.repo}`                         | From `github:`                                   |
 | `{artifact.id}`                                            | The artifact's id (as listed under `artifacts:`) |
 | `{artifact.package}`                                       | Resolved npm package name (TypeScript)           |
 | `{artifact.goModule}` / `{artifact.goPackageName}`         | Resolved Go naming                               |

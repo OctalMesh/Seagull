@@ -4,7 +4,7 @@ import path from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { GITHUB, makeArtifact, makeContract } from "../test-support/fixtures";
+import { makeArtifact, makeContract } from "../test-support/fixtures";
 import { renderReadme } from "./readme-renderer";
 
 describe("renderReadme", () => {
@@ -23,7 +23,6 @@ describe("renderReadme", () => {
       contract: makeContract(),
       artifact: makeArtifact({ readmeTemplate: undefined }),
       version: "1.0.0",
-      github: GITHUB,
       vars: {},
     });
 
@@ -40,7 +39,7 @@ describe("renderReadme", () => {
         "",
         "Install `{artifact.package}@{version}` from {artifact.npmRegistry}.",
         "Branch: {artifact.branch}, tag: {artifact.tag}.",
-        "Org: {vars.org}, repo: {github.owner}/{github.repo}.",
+        "Org: {vars.org}, repo: {vars.repository.owner}/{vars.repository.repo}.",
       ].join("\n"),
     );
 
@@ -48,8 +47,10 @@ describe("renderReadme", () => {
       contract: makeContract({ title: "Auth Service API" }),
       artifact: makeArtifact({ readmeTemplate: templatePath }),
       version: "1.2.3",
-      github: GITHUB,
-      vars: { org: "octalmesh" },
+      vars: {
+        org: "octalmesh",
+        repository: { owner: "OctalMesh", repo: "ows-contracts" },
+      },
     });
 
     expect(readme).toBe(
@@ -82,7 +83,6 @@ describe("renderReadme", () => {
         readmeTemplate: templatePath,
       }),
       version: "1.0.0",
-      github: GITHUB,
       vars: {},
     });
 
@@ -101,7 +101,6 @@ describe("renderReadme", () => {
         contract: makeContract(),
         artifact: makeArtifact({ readmeTemplate: templatePath }),
         version: "1.0.0",
-        github: GITHUB,
         vars: {},
       }),
     ).rejects.toThrow(/Unknown template placeholder/);
@@ -115,7 +114,6 @@ describe("renderReadme", () => {
           readmeTemplate: path.join(dir, "missing.md"),
         }),
         version: "1.0.0",
-        github: GITHUB,
         vars: {},
       }),
     ).rejects.toThrow();

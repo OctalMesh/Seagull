@@ -25,7 +25,6 @@ export interface GenerateContext {
   contract: ResolvedContract;
   artifact: ResolvedArtifact;
   version: string;
-  github: { owner: string; repo: string };
   /**
    * Absolute path to the contract's bundled spec
    * (`<specsDir>/<contract>.<paths.specFormat>` - `json` or `yaml`).

@@ -112,13 +112,13 @@ describe("buildTemplateContext", () => {
     expect(
       buildTemplateContext({
         service: "auth",
-        github: { owner: "OctalMesh", repo: "ows-contracts" },
+        repository: { owner: "OctalMesh", repo: "ows-contracts" },
         vars: { org: "octalmesh", nested: { deep: "value" } },
       }),
     ).toEqual({
       service: "auth",
-      "github.owner": "OctalMesh",
-      "github.repo": "ows-contracts",
+      "repository.owner": "OctalMesh",
+      "repository.repo": "ows-contracts",
       "vars.org": "octalmesh",
       "vars.nested.deep": "value",
     });
@@ -148,7 +148,7 @@ describe("buildTemplateContext", () => {
     const context = buildTemplateContext({
       service: "auth",
       id: "ts-client",
-      github: { owner: "OctalMesh", repo: "ows-contracts" },
+      repository: { owner: "OctalMesh", repo: "ows-contracts" },
       vars: { org: "octalmesh" },
     });
 
@@ -159,7 +159,10 @@ describe("buildTemplateContext", () => {
       "@octalmesh/auth-client",
     );
     expect(
-      interpolate("https://github.com/{github.owner}/{github.repo}", context),
+      interpolate(
+        "https://github.com/{repository.owner}/{repository.repo}",
+        context,
+      ),
     ).toBe("https://github.com/OctalMesh/ows-contracts");
   });
 });

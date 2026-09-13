@@ -27,7 +27,6 @@ function makeConfig(
       sdk: path.join(dist, "sdk"),
       specFormat: ["json"],
     },
-    github: { owner: "OctalMesh", repo: "ows-contracts" },
     vars: {},
     docs: {
       server: { host: "localhost", port: 8080 },

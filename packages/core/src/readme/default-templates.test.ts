@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { GITHUB, makeArtifact, makeContract } from "../test-support/fixtures";
+import { makeArtifact, makeContract } from "../test-support/fixtures";
 import { renderDefaultReadme } from "./default-templates";
 
 describe("renderDefaultReadme", () => {
@@ -12,13 +12,12 @@ describe("renderDefaultReadme", () => {
       contract,
       artifact,
       version: "1.2.3",
-      github: GITHUB,
       vars: {},
     });
 
     expect(readme).toContain("# Auth Service API - TypeScript Client SDK");
     expect(readme).toContain(
-      "> Generated from `specs/auth/openapi.yaml` in [OctalMesh/ows-contracts](https://github.com/OctalMesh/ows-contracts).",
+      "> Generated from `specs/auth/openapi.yaml` in https://github.com/OctalMesh/ows-contracts.",
     );
     expect(readme).toContain("Version: `1.2.3`");
     expect(readme).toContain("Source branch: `sdk/svc-auth/ts-client`");
@@ -48,7 +47,6 @@ describe("renderDefaultReadme", () => {
       contract: makeContract(),
       artifact,
       version: "1.0.0",
-      github: GITHUB,
       vars: {},
     });
 
@@ -64,7 +62,6 @@ describe("renderDefaultReadme", () => {
         package: "@octalmesh/auth-client",
       }),
       version: "1.0.0",
-      github: GITHUB,
       vars: {},
     });
 
@@ -83,7 +80,6 @@ describe("renderDefaultReadme", () => {
         package: "@octalmesh/auth-server",
       }),
       version: "1.0.0",
-      github: GITHUB,
       vars: {},
     });
 
@@ -116,7 +112,6 @@ describe("renderDefaultReadme", () => {
         },
       }),
       version: "1.0.0",
-      github: GITHUB,
       vars: {},
     });
 
@@ -139,7 +134,6 @@ describe("renderDefaultReadme", () => {
         goPackageName: "authserver",
       }),
       version: "1.0.0",
-      github: GITHUB,
       vars: {},
     });
 
@@ -156,7 +150,6 @@ describe("renderDefaultReadme", () => {
         maven: { groupId: "com.octalmesh.auth", artifactId: "auth-client" },
       }),
       version: "2.0.0",
-      github: GITHUB,
       vars: {},
     });
 
@@ -177,7 +170,6 @@ describe("renderDefaultReadme", () => {
         maven: { groupId: "com.octalmesh.auth", artifactId: "auth-server" },
       }),
       version: "1.0.0",
-      github: GITHUB,
       vars: {},
     });
 

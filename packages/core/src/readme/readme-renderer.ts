@@ -13,7 +13,6 @@ export interface RenderReadmeArgs {
   contract: ResolvedContract;
   artifact: ResolvedArtifact;
   version: string;
-  github: { owner: string; repo: string };
   vars: VarsTree;
 }
 
@@ -23,13 +22,12 @@ export interface RenderReadmeArgs {
  * If the artifact has a `readme:` path configured (resolved at config-load time
  * to `artifact.readmeTemplate`), that file is read and interpolated with the
  * same `{...}` placeholder engine naming templates use - `{service}`,
- * `{title}`, `{version}`, `{vars.*}`, `{github.owner}`, `{github.repo}`, plus
- * `{artifact.*}` (id/lang/kind/package/goModule/goPackageName/maven.groupId/
+ * `{title}`, `{version}`, `{vars.*}`, plus `{artifact.*}`
+ * (id/lang/kind/package/goModule/goPackageName/maven.groupId/
  * maven.artifactId/branch/tag/npmRegistry/mavenRepositoryUrl). Otherwise,
  * falls back to a built-in default template for the artifact's language/kind.
  *
- * @param args - The contract, artifact, version, and github/vars context to
- *               render for.
+ * @param args - The contract, artifact, version, and vars context to render for.
  * @returns The rendered README content.
  */
 export async function renderReadme(args: RenderReadmeArgs): Promise<string> {
@@ -42,7 +40,6 @@ export async function renderReadme(args: RenderReadmeArgs): Promise<string> {
     service: args.contract.name,
     title: args.contract.title,
     version: args.version,
-    github: args.github,
     vars: args.vars,
     artifact: {
       id: args.artifact.id,
@@ -57,7 +54,6 @@ export async function renderReadme(args: RenderReadmeArgs): Promise<string> {
         args.artifact,
         args.contract.name,
         args.version,
-        args.github,
         args.vars,
       ),
       npmRegistry: args.artifact.publishing.npmRegistry,

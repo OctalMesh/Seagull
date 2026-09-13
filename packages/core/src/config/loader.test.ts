@@ -10,8 +10,11 @@ import { loadConfig } from "./loader";
 function baseConfig(): Record<string, unknown> {
   return {
     configVersion: 1,
-    github: { owner: "OctalMesh", repo: "ows-contracts" },
-    vars: { org: "octalmesh", platform: "web" },
+    vars: {
+      org: "octalmesh",
+      platform: "web",
+      repository: { owner: "OctalMesh", repo: "ows-contracts" },
+    },
     paths: { dist: "dist" },
     docs: {
       server: { host: "localhost", port: 8080 },
@@ -25,12 +28,13 @@ function baseConfig(): Record<string, unknown> {
     publishing: {
       branch: "sdk/svc-{service}/{id}",
       tag: "svc-{service}-{id}-v{version}",
-      repositoryUrl: "https://github.com/{github.owner}/{github.repo}",
+      repositoryUrl:
+        "https://github.com/{vars.repository.owner}/{vars.repository.repo}",
       npm: { registry: "https://npm.pkg.github.com", access: "public" },
       maven: {
         repositoryId: "github",
         repositoryUrl:
-          "https://maven.pkg.github.com/{github.owner}/{github.repo}",
+          "https://maven.pkg.github.com/{vars.repository.owner}/{vars.repository.repo}",
       },
     },
     generators: {
@@ -119,11 +123,11 @@ describe("loadConfig", () => {
 
     expect(config.configVersion).toBe(1);
     expect(config.rootDir).toBe(dir);
-    expect(config.github).toEqual({
-      owner: "OctalMesh",
-      repo: "ows-contracts",
+    expect(config.vars).toEqual({
+      org: "octalmesh",
+      platform: "web",
+      repository: { owner: "OctalMesh", repo: "ows-contracts" },
     });
-    expect(config.vars).toEqual({ org: "octalmesh", platform: "web" });
     expect(config.paths.dist).toBe(path.join(dir, "dist"));
     expect(config.paths.specs).toBe(path.join(dir, "dist", "specs"));
     expect(config.paths.docs).toBe(path.join(dir, "dist", "docs"));

@@ -54,8 +54,6 @@ export function makeContract(
   };
 }
 
-export const GITHUB = { owner: "OctalMesh", repo: "ows-contracts" };
-
 export function makeConfig(
   rootDir: string,
   overrides: Partial<ResolvedConfig> = {},
@@ -73,7 +71,6 @@ export function makeConfig(
       sdk: path.join(dist, "sdk"),
       specFormat: ["json"],
     },
-    github: GITHUB,
     vars: {},
     docs: {
       server: { host: "localhost", port: 8080 },
