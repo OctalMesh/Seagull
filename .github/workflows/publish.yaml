@@ -55,7 +55,7 @@ jobs:
         run: "pnpm run typecheck"
 
       - name: "Run: Test suite"
-        run: "pnpm run test:run"
+        run: "pnpm run test"
 
       - name: "Run: Verify release tag matches package version"
         run: |
