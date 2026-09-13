@@ -1,6 +1,6 @@
 {
   "name": "@octalmesh/seagull-docs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Seagull's documentation website generator.",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",
@@ -28,7 +28,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.22.0"
   },
   "scripts": {
     "build": "tsdown",

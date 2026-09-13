@@ -1,6 +1,6 @@
 {
   "name": "@octalmesh/seagull",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Contract-first OpenAPI SDK, docs, and publishing pipeline - driven by a single seagull config.",
   "author": "OctalMesh <contact@octalmesh.com> (https://octalmesh.com)",
   "license": "MIT",
@@ -44,13 +44,13 @@
   },
   "packageManager": "pnpm@12.3.4",
   "engines": {
-    "node": ">=24.0.0",
-    "pnpm": ">=12.0.0"
+    "node": ">=22.22.0",
+    "pnpm": ">=11.0.0"
   },
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "^24.0.0",
+      "version": "^22.22.0 || ^24.0.0",
       "onFail": "warn"
     }
   },
