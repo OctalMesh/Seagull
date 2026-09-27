@@ -4,8 +4,8 @@
 # Gates pull requests targeting release. quality.yaml and test.yaml already    #
 # run their checks against release as a PR-target branch, so this workflow     #
 # adds only what they don't cover: proof that the version actually moved       #
-# forward, i.e. the "Version Packages" PR was merged on dev before this PR was #
-# opened.                                                                      #
+# forward. The "Version Packages" PR is created directly against `release`     #
+# from the current `dev` state.                                                #
 #                                                                              #
 # See: RELEASING.md - for more details on the release process.                 #
 # ============================================================================ #
@@ -51,6 +51,6 @@ jobs:
 
           if ! pnpx --yes semver "$PR_VERSION" -r ">${RELEASE_VERSION}" >/dev/null; then
             echo "::error::Package version ($PR_VERSION) is not greater than the version already on release ($RELEASE_VERSION)."
-            echo "::error::Merge the \"Version Packages\" PR on dev (see version.yaml) before opening this PR."
+            echo "::error::The PR head must contain a SemVer version newer than release; the normal path is the Version Packages PR maintained by version.yaml from dev."
             exit 1
           fi
