@@ -1,5 +1,12 @@
 # @octalmesh/seagull-cli
 
+## 0.1.2
+
+### Patch Changes
+
+- @octalmesh/seagull-core@0.1.2
+  - @octalmesh/seagull-docs@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes
