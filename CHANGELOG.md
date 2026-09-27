@@ -1,5 +1,18 @@
 # @octalmesh/seagull
 
+## 0.1.2
+
+### Patch Changes
+
+- b291e98: Fix the `release` script referencing the nonexistent `test:run` npm script;
+  it now runs the repository's actual `test` script before publishing.
+- 59e1806: Replace the repository-local `version-gt.mjs` script with the standard `semver`
+  CLI (via `npx`) in the release-readiness check, removing duplicated
+  version-comparison code while preserving strict SemVer semantics.
+- @octalmesh/seagull-cli@0.1.2
+  - @octalmesh/seagull-core@0.1.2
+  - @octalmesh/seagull-docs@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes

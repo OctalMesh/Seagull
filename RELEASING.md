@@ -44,24 +44,23 @@ Changesets basics.
 > [!IMPORTANT]
 > This flow depends on three repo settings:
 > - The "Version Packages" PR must be merged with a **merge commit** (not
->   squash/rebase), so `release`'s history stays a superset of `dev`'s and the
->   sync-back in step 5 below is a clean fast-forwardable merge instead of a
->   conflict-prone rewrite.
+>   squash/rebase), so `release`'s history retains `dev`'s history and the
+>   sync-back into `dev` can preserve the release merge topology without
+>   rewriting either branch.
 > - A `SYNC_PAT` repo secret (a PAT with `contents` and `pull-requests` access)
->   is needed for two things a default `GITHUB_TOKEN` can't do:
->   `post-release.yaml`'s `sync-dev` job pushing straight to `dev` past branch
->   protection, and `version.yaml` opening its PR in a way that actually
->   triggers `release-readiness.yaml`/`quality.yaml`/`test.yaml`/`codeql.yaml`
->   on it (PRs opened with the default `GITHUB_TOKEN` don't fire `pull_request`
->   workflows - GitHub's anti-recursion rule). Both jobs fall back to
->   `GITHUB_TOKEN` if `SYNC_PAT` isn't set, but then you'd have to nudge those
->   checks to run by hand (e.g. close/reopen the PR).
+>   is used by both release automation paths. For `version.yaml`, using a PAT
+>   allows the generated Version Packages PR to trigger its `pull_request`
+>   workflows normally; a PR created with the default `GITHUB_TOKEN` instead
+>   enters GitHub's approval-required state. For `post-release.yaml`, the same
+>   secret is used by `sync-dev` so the workflow can push to the protected `dev`
+>   branch when repository branch-protection rules permit that token to do so.
+>   Both jobs fall back to `GITHUB_TOKEN` if `SYNC_PAT` is not set.
 > - **Settings -> Actions -> General -> Workflow permissions -> "Allow GitHub
 >   Actions to create and approve pull requests"** must be checked. This is
 >   [called out in changesets/action's own docs](https://github.com/changesets/action) -
->   without it, the fallback path (default `GITHUB_TOKEN`, if `SYNC_PAT` isn't
->   set) can't open the Version Packages PR at all, full stop, not just the
->   "checks don't trigger" issue above.
+>   without it, the fallback `GITHUB_TOKEN` path cannot create the Version
+>   Packages PR. The setting is required by `changesets/action` when it creates
+>   the PR.
 
 <div align="center">
   <h2 id="adding-a-changeset">Day-to-day: adding a changeset</h2>
@@ -101,7 +100,7 @@ pnpm run changeset:status
 | `pnpm run changeset:empty`  | Add an empty changeset (no version bump)                                                                                                                          |
 | `pnpm run changeset:status` | List pending changesets and the version bumps they'd produce, without writing anything                                                                            |
 | `pnpm run version`          | Apply every pending changeset: bump all four `package.json`s, update `CHANGELOG.md`, delete the consumed changesets - normally run by `version.yaml`, not by hand |
-| `pnpm run release`          | Full local release: `build` -> `test:run` -> `release:publish` - see [Publishing locally](#publishing-locally)                                                    |
+| `pnpm run release`          | Full local release: `build` -> `test` -> `release:publish` - see [Publishing locally](#publishing-locally)                                                        |
 | `pnpm run release:publish`  | `pnpm -r publish` across all four packages - resolves `workspace:*` deps to real semver, respects build order                                                     |
 | `pnpm run release:dry`      | Same as `release:publish`, with `--dry-run` - prints what would be published without publishing                                                                   |
 
@@ -139,9 +138,9 @@ flowchart TD
    `CHANGELOG.md`), and opens that straight against `release` - one PR carries
    both the version bump and the full set of accumulated dev changes.
 3. `quality.yaml`/`test.yaml`/`codeql.yaml` run against it like any other PR
-   into `release`, and `release-readiness.yaml` double-checks the version really
-   is ahead - a safety net, since a version bump is what this PR always carries
-   in the happy path.
+   into `release`, and `release-readiness.yaml` double-checks that the PR's root
+   package version is a valid SemVer strictly greater than the version currently
+   on `release`.
 4. Merge it with a merge commit when you're ready to cut a release. This is the
    one merge in the whole flow where the strategy matters (see the settings note
    above) - it's what makes step 5's sync-back conflict-free.
@@ -160,8 +159,8 @@ flowchart TD
 > [!IMPORTANT]
 > The release tag's version (`vX.Y.Z` -> `X.Y.Z`) must exactly match the root
 > `package.json` version at that commit. Both `release-readiness.yaml` (before
-> the merge) and `publish.yaml` (before publishing) check a version against its
-> expected counterpart and fail loudly on mismatch.
+> the merge) and `publish.yaml` (before publishing) compare the relevant
+> versions and fail loudly on mismatch.
 
 <div align="center">
   <h2 id="publishing-locally">Publishing locally</h2>

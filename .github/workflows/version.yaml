@@ -9,12 +9,12 @@
 # quality.yaml, test.yaml, and codeql.yaml all still run against it as a       #
 # normal PR into release.                                                      #
 #                                                                              #
-# Secrets:                                                                     #
-#   - GITHUB_TOKEN: Used to authenticate the actions that bump versions and    #
-#                   open PRs. This token is automatically provided by GitHub   #
-#                   Actions.                                                   #
-#   - SYNC_PAT:     Personal Access Token with contents and PR access, used to #
-#                   open the dev -> release PR.                                #
+# Authentication:                                                              #
+#   - GITHUB_TOKEN: Fallback token provided automatically by GitHub Actions.   #
+#                   PRs created with it enter GitHub's approval-required state #
+#   - SYNC_PAT:     Preferred token with contents and pull-request access. It  #
+#                   lets the generated PR trigger pull_request workflows       #
+#                   without manual approval.                                   #
 #                                                                              #
 # See: https://changesets.dev                                                  #
 # ============================================================================ #
