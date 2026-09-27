@@ -101,7 +101,7 @@ pnpm run changeset:status
 | `pnpm run changeset:empty`  | Add an empty changeset (no version bump)                                                                                                                          |
 | `pnpm run changeset:status` | List pending changesets and the version bumps they'd produce, without writing anything                                                                            |
 | `pnpm run version`          | Apply every pending changeset: bump all four `package.json`s, update `CHANGELOG.md`, delete the consumed changesets - normally run by `version.yaml`, not by hand |
-| `pnpm run release`          | Full local release: `build` -> `test:run` -> `release:publish` - see [Publishing locally](#publishing-locally)                                                    |
+| `pnpm run release`          | Full local release: `build` -> `test` -> `release:publish` - see [Publishing locally](#publishing-locally)                                                        |
 | `pnpm run release:publish`  | `pnpm -r publish` across all four packages - resolves `workspace:*` deps to real semver, respects build order                                                     |
 | `pnpm run release:dry`      | Same as `release:publish`, with `--dry-run` - prints what would be published without publishing                                                                   |
 

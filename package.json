@@ -81,7 +81,7 @@
     "changeset:status": "changeset status --verbose --since=dev",
     "changeset:empty": "changeset add --empty",
     "version": "changeset version && pnpm install --no-frozen-lockfile --lockfile-only",
-    "release": "pnpm run build && pnpm run test:run && pnpm run release:publish",
+    "release": "pnpm run build && pnpm run test && pnpm run release:publish",
     "release:dry": "pnpm -r publish --no-git-checks --provenance --dry-run",
     "release:publish": "pnpm -r publish --no-git-checks --provenance"
   },
