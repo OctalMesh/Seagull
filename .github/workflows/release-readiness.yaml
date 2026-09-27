@@ -49,7 +49,7 @@ jobs:
           echo "PR version:      $PR_VERSION"
           echo "release version: $RELEASE_VERSION"
 
-          if ! node .github/scripts/version-gt.mjs "$PR_VERSION" "$RELEASE_VERSION"; then
+          if ! pnpx --yes semver "$PR_VERSION" -r ">${RELEASE_VERSION}" >/dev/null; then
             echo "::error::Package version ($PR_VERSION) is not greater than the version already on release ($RELEASE_VERSION)."
             echo "::error::Merge the \"Version Packages\" PR on dev (see version.yaml) before opening this PR."
             exit 1
