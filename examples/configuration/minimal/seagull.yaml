@@ -9,13 +9,21 @@
 
 configVersion: 1
 
-# A free-form tree for naming templates - nest however deep is useful, every
-# leaf is addressable as {vars.a.b.c}.
+# ============================================================================ #
+# Free-form tree of values used for template interpolation elsewhere in this   #
+# file (generator naming, additionalProperties, ...). Nest however you like -  #
+# every leaf is addressable as `{vars.<dot.path>}`.                            #
+# ============================================================================ #
 vars:
   repository:
     owner: "your-org"
     repo: "your-contracts-repo"
 
+# ============================================================================ #
+#  Publishing - git branch/tag naming and registry URLs for every artifact,    #
+#  unless overridden per-generator (`generators.<id>.publishing`) or           #
+#  per-contract-artifact (`artifacts[].overrides.publishing`).                 #
+# ============================================================================ #
 publishing:
   branch: "sdk/svc-{service}/{id}"
   tag: "svc-{service}-{id}-v{version}"
@@ -29,6 +37,9 @@ publishing:
     repositoryId: "github"
     repositoryUrl: "https://maven.pkg.github.com/{vars.repository.owner}/{vars.repository.repo}"
 
+# ============================================================================ #
+# Documentation - server host/port and metadata for the generated docs site.   #
+# ============================================================================ #
 docs:
   server:
     host: "localhost"
@@ -40,6 +51,10 @@ docs:
     favicon: "/favicon.ico"
     baseServerUrl: "https://api.example.com"
 
+# ============================================================================ #
+#  Generators - reusable "recipes": a tool + how to invoke it. Contracts pick  #
+#  which of these to run, by id, under their own `artifacts:` list below.      #
+# ============================================================================ #
 generators:
   ts-client:
     tool: "openapi-generator"
@@ -48,6 +63,12 @@ generators:
     kind: "client"
     package: "@your-org/{service}-client"
 
+# ============================================================================ #
+#  Contracts - one per service. `artifacts` picks which generators (above)     #
+#  run for that service, by id. Different services may list different          #
+#  generators entirely (e.g. a service-specific `java-client-legacy` recipe)   #
+#  - just add it under `generators:` and reference it here.                    #
+# ============================================================================ #
 contracts:
   - name: "auth"
     title: "Auth Service API"
